@@ -1,0 +1,38 @@
+# Modal Resonance
+
+> Independent AI advisory based in Berlin, Germany. Modal Resonance helps
+> organizations assess where they stand with AI, move prototypes to reliable
+> production, and evaluate AI systems against privacy, fairness, and EU AI Act
+> requirements. Independent expertise, grounded in peer-reviewed research and
+> hands-on delivery.
+
+## Who
+
+- Omar Ali Fdal — co-founder, AI Strategy and Engineering. Led an AI company from founding through acquisition, building production ML systems, RAG pipelines, and LLM applications for enterprise clients. [LinkedIn](https://www.linkedin.com/in/oalifdal/)
+- Dr. Matteo Giomi — co-founder, AI Research and Evaluation. Led AI privacy research at an enterprise data protection company, contributing to national standards bodies and developing evaluation methods now used across the industry. [LinkedIn](https://www.linkedin.com/in/matteo-giomi/)
+
+## What we do
+
+- **Strategy — defining the right AI starting point.** Frameworks for evaluating use cases, assessing feasibility, and aligning investments with business priorities.
+- **Engineering — moving from prototype to production.** Readiness assessments across data, infrastructure, and process, then execution alongside engineering teams.
+- **Assurance — evaluating AI systems already in production.** Independent technical evaluations, privacy risk assessments, adversarial testing, and fairness audits, delivered as evidence-based reports suitable for internal governance or regulatory communication.
+- **Frontier — navigating agentic AI and emerging regulation.** Risk mapping for tool-using and multi-agent systems, including EU AI Act classification and provider responsibility analysis.
+
+## Credibility
+
+- **Anonymeter** — open-source privacy risk measurement tool authored by the founders. [Repository](https://github.com/statice/anonymeter/) · [Peer-reviewed paper (PoPETs 2023)](https://petsymposium.org/popets/2023/popets-2023-0055.php)
+- Anonymeter was evaluated by the French data protection authority (CNIL) and is used by enterprises across Europe.
+- Contributions to NIST's Collaborative Research Cycle on privacy risk assessment.
+- IEEE standardization work on synthetic data evaluation.
+- Collaboration with NVIDIA on privacy-preserving methods.
+- Named as inventors on pending patents: [Omar Ali Fdal](https://patents.google.com/patent/US20260057176A1/) · [Matteo Giomi](https://patents.google.com/patent/US20230401336A1/)
+
+## Contact
+
+- Website: https://modalresonance.com
+- Location: Berlin, Germany
+- Serving: DACH, EU, and international clients
+
+## Docs
+
+- [Home](https://modalresonance.com/)
