@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Modal Resonance Writing</title>
+    <link>https://modalresonance.com/writing/</link>
+    <description>Perspectives on AI systems, privacy, and evaluation from the Modal Resonance team.</description>
+    <language>en</language>
+    <atom:link href="https://modalresonance.com/writing/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Towards technical evaluation of AI model anonymity</title>
+      <link>https://modalresonance.com/writing/paname-ai-model-anonymity/</link>
+      <description><![CDATA[We tested the CNIL's PANAME library, fine-tuning a Llama 3.2 1B model on Enron emails to measure how much sanitizing training data reduces membership inference attack success.]]></description>
+      <pubDate>Mon, 06 Jul 2026 00:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://modalresonance.com/writing/paname-ai-model-anonymity/</guid>
+      <author>Omar Ali Fdal, Matteo Giomi</author>
+    </item>
+    <item>
+      <title>IEEE report on synthetic data: privacy risks, metrics, and governance.</title>
+      <link>https://modalresonance.com/writing/ieee-synthetic-data-2025/</link>
+      <description><![CDATA[The IEEE Industry Connections 2025 report on structured synthetic data, co-authored by Matteo Giomi, examines the legal, technical, and governance dimensions of synthetic data and establishes that anonymity cannot be assumed from generation alone.]]></description>
+      <pubDate>Fri, 19 Jun 2026 00:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://modalresonance.com/writing/ieee-synthetic-data-2025/</guid>
+      <author>Matteo Giomi, Omar Ali Fdal</author>
+    </item>
+    <item>
+      <title>Privacy risks evaluation at scale: NIST's Collaborative Research Cycle</title>
+      <link>https://modalresonance.com/writing/nist-crc-privacy-risk-evaluation/</link>
+      <description><![CDATA[Applying Anonymeter to over 150 de-identified datasets from the NIST Collaborative Research Cycle shows that no current synthesis algorithm achieves residual privacy risk below a few percentage points, and that algorithm choice can change measured risk by an order of magnitude.]]></description>
+      <pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://modalresonance.com/writing/nist-crc-privacy-risk-evaluation/</guid>
+      <author>Matteo Giomi, Omar Ali Fdal</author>
+    </item>
+    <item>
+      <title>Empirical Privacy Risk Assessment in Tabular Synthetic Data</title>
+      <link>https://modalresonance.com/writing/anonymeter-privacy-evaluation/</link>
+      <description><![CDATA[Anonymeter is an open-source framework for measuring privacy risk in synthetic tabular data, published at PoPETs 2023 and evaluated positively by France's CNIL.]]></description>
+      <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://modalresonance.com/writing/anonymeter-privacy-evaluation/</guid>
+      <author>Matteo Giomi, Omar Ali Fdal</author>
+    </item>
+    <item>
+      <title>Benchmarking Open-Source PII Detectors</title>
+      <link>https://modalresonance.com/writing/pii-benchmark/</link>
+      <description><![CDATA[We benchmarked three open-source PII detectors (Microsoft Presidio, GLiNER, and OpenAI's Privacy Filter) on detection accuracy and throughput across two datasets and six entity types. OPF leads out-of-the-box on a GPU, Presidio wins on CPU and pattern-rich entities, GLiNER is the most flexible to configure.]]></description>
+      <pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://modalresonance.com/writing/pii-benchmark/</guid>
+      <author>Matteo Giomi, Omar Ali Fdal</author>
+    </item>
+    <item>
+      <title>Mapping Privacy Risk Across the AI Lifecycle</title>
+      <link>https://modalresonance.com/writing/ai-lifecycle-risks/</link>
+      <description><![CDATA[A structured breakdown of where privacy risk lives across the four phases of the AI lifecycle, and what genuinely changes with generative AI versus traditional ML.]]></description>
+      <pubDate>Tue, 05 May 2026 00:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://modalresonance.com/writing/ai-lifecycle-risks/</guid>
+      <author>Omar Ali Fdal, Matteo Giomi</author>
+    </item>
+  </channel>
+</rss>

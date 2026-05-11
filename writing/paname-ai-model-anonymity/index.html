@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#F7F9FA" />
+
+  <title>Towards technical evaluation of AI model anonymity | Modal Resonance</title>
+  <meta name="description" content="We tested the CNIL's PANAME library, fine-tuning a Llama 3.2 1B model on Enron emails to measure how much sanitizing training data reduces membership inference attack success." />
+
+  <link rel="canonical" href="https://modalresonance.com/writing/paname-ai-model-anonymity/" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+
+  <link rel="alternate" type="application/rss+xml" title="Modal Resonance Writing" href="https://modalresonance.com/writing/feed.xml" />
+
+  <!-- OpenGraph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Modal Resonance" />
+  <meta property="og:title" content="Towards technical evaluation of AI model anonymity | Modal Resonance" />
+  <meta property="og:description" content="We tested the CNIL's PANAME library, fine-tuning a Llama 3.2 1B model on Enron emails to measure how much sanitizing training data reduces membership inference attack success." />
+  <meta property="og:url" content="https://modalresonance.com/writing/paname-ai-model-anonymity/" />
+  <meta property="og:image" content="https://modalresonance.com/assets/img/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Towards technical evaluation of AI model anonymity | Modal Resonance" />
+  <meta name="twitter:description" content="We tested the CNIL's PANAME library, fine-tuning a Llama 3.2 1B model on Enron emails to measure how much sanitizing training data reduces membership inference attack success." />
+  <meta name="twitter:image" content="https://modalresonance.com/assets/img/og-image.svg" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://modalresonance.com/writing/paname-ai-model-anonymity/#article",
+      "headline": "Towards technical evaluation of AI model anonymity",
+      "description": "We tested the CNIL's PANAME library, fine-tuning a Llama 3.2 1B model on Enron emails to measure how much sanitizing training data reduces membership inference attack success.",
+      "url": "https://modalresonance.com/writing/paname-ai-model-anonymity/",
+      "datePublished": "2026-07-06",
+      "author": [
+        {
+          "@type": "Person",
+          "name": "Omar Ali Fdal"
+        },
+        {
+          "@type": "Person",
+          "name": "Matteo Giomi"
+        }
+      ],
+      "publisher": {
+        "@id": "https://modalresonance.com/#org"
+      },
+      "image": "https://modalresonance.com/assets/img/og-image.svg",
+      "keywords": [
+        "privacy",
+        "GDPR",
+        "PANAME",
+        "CNIL",
+        "membership inference",
+        "AI models"
+      ],
+      "isPartOf": {
+        "@type": "Blog",
+        "@id": "https://modalresonance.com/writing/#blog"
+      },
+      "inLanguage": "en"
+    }
+  ]
+}
+  </script>
+
+  <script defer data-domain="modalresonance.com" src="https://plausible.io/js/script.js"></script>
+
+  <style>body { margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <div id="root"><link rel="preload" as="image" href="/assets/img/wordmark.png"/><link rel="preload" as="image" href="/writing/assets/paname-ai-model-anonymity-fig1.png"/><link rel="preload" as="image" href="/writing/assets/paname-ai-model-anonymity-fig2.png"/><div style="background:#F7F9FA;color:#1a1a1a;min-height:100vh"><style>
+    
+  /* DM Sans - latin-ext */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-italic-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* DM Sans - latin */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-italic-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* DM Sans - latin-ext */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-normal-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* DM Sans - latin */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-normal-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --text: #1a1a1a;
+--text-secondary: #4a5568;
+--bg: #F7F9FA;
+--bg-dark: #0B1726;
+--accent: #0D7377;
+--accent-light: #14919B;
+--border: #dce3e8;
+    }
+
+    .theme-switcher {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      display: none; gap: 8px; padding: 10px 14px;
+      background: rgba(0,0,0,0.85); border-radius: 8px;
+      backdrop-filter: blur(12px);
+    }
+    .theme-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid transparent; cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .theme-btn:hover { transform: scale(1.15); }
+    .theme-btn.active { border-color: #fff; }
+    .theme-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      color: #999; letter-spacing: 0.5px;
+      display: flex; align-items: center; margin-right: 6px;
+    }
+
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 48px;
+      background: rgba(247, 249, 250, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; cursor: pointer;
+    }
+    .nav-logo-img { height: 32px; width: auto; display: block; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-link {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: var(--text-secondary); text-decoration: none;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      cursor: pointer; border: none; background: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-cta {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 10px 24px; background: var(--text);
+      color: var(--bg); border: none; cursor: pointer;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      transition: background 0.25s;
+    }
+    .nav-cta:hover { background: var(--accent); }
+
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; padding: 140px 48px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -200px; right: -200px;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(13, 115, 119, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(42px, 6vw, 72px); line-height: 1.08;
+      font-weight: 700; letter-spacing: -0.02em; max-width: 800px;
+      margin-bottom: 32px;
+    }
+    .hero-sub {
+      font-family: 'DM Sans', sans-serif; font-size: 18px;
+      line-height: 1.7; color: var(--text-secondary);
+      max-width: 560px; font-weight: 300;
+    }
+    .hero-scroll {
+      margin-top: 80px; display: flex; align-items: center; gap: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); cursor: pointer;
+      border: none; background: none;
+    }
+    .hero-scroll:hover { color: var(--accent); }
+    .scroll-line {
+      width: 48px; height: 1px; background: var(--accent);
+      transition: width 0.3s;
+    }
+    .hero-scroll:hover .scroll-line { width: 64px; }
+
+    .section { padding: 120px 48px; }
+    .section-dark { background: var(--bg-dark); color: #e8e6e1; }
+    .section-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(32px, 4vw, 48px); line-height: 1.15;
+      font-weight: 700; letter-spacing: -0.02em; margin-bottom: 20px;
+    }
+    .section-subtitle {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.7; color: var(--text-secondary);
+      max-width: 900px; font-weight: 300;
+    }
+    .section-dark .section-subtitle { color: #999; }
+
+    .problems-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; margin-top: 64px;
+    }
+    .problems-grid > div { height: 100%; }
+    .problem-card {
+      /* background: #fff; */
+      background: transparent;
+      padding: 48px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: all 0.35s ease; position: relative;
+      overflow: hidden;
+      height: 100%;
+    }
+    .problem-card:hover { border-color: transparent; box-shadow: 0 8px 40px rgba(0,0,0,0.06); }
+    .problem-tag {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 20px; font-weight: 500;
+      color: var(--card-color);
+    }
+    .problem-title {
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 24px;
+      line-height: 1.25; margin-bottom: 16px; letter-spacing: -0.01em;
+    }
+    .problem-desc {
+      font-family: 'DM Sans', sans-serif; font-size: 16x;
+      line-height: 1.7; color: var(--text-secondary); font-weight: 300;
+    }
+    .problem-expand {
+      margin-top: 24px; overflow: hidden;
+      transition: max-height 0.5s ease, opacity 0.4s ease;
+    }
+    .problem-expand-inner { padding-top: 24px; border-top: 1px solid var(--border); }
+    .signal-item {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.6; color: var(--text-secondary);
+      padding: 6px 0 6px 20px; position: relative; font-weight: 300;
+    }
+    .signal-item::before {
+      content: '→'; position: absolute; left: 0; color: var(--accent);
+    }
+    .problem-approach {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.7; color: var(--text); margin-top: 20px;
+      font-weight: 400; font-style: italic;
+    }
+
+    .problem-indicators-label {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #999; margin-bottom: 12px;
+    }
+
+    .problem-card-solid { color: #F6F3EF; border-color: transparent; }
+    .problem-card-solid .problem-tag { color: rgba(246, 243, 239, 0.99); }
+    .problem-card-solid .problem-desc,
+    .problem-card-solid .signal-item { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .signal-item::before { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-approach { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-indicators-label { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-expand-inner { border-top-color: rgba(255,255,255,0.15); }
+    .problem-card-solid:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.15); border-color: transparent; }
+
+
+    .approach-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 64px; margin-top: 80px;
+    }
+    .approach-number {
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 48px;
+      letter-spacing: -0.02em; color: #0D7377; margin-bottom: 20px;
+    }
+    .approach-name {
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 22px;
+      letter-spacing: -0.01em; margin-bottom: 12px; color: #e8e6e1;
+    }
+    .approach-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.75; color: #888; font-weight: 300;
+    }
+
+    .background-section { margin-top: 64px; max-width: 720px; }
+    .background-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.85; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .team-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; margin-top: 34px;
+    }
+    .team-intro {
+      grid-column: 1 / -1; max-width: 680px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+      margin-bottom: 16px;
+    }
+    .team-member {}
+    .team-photo {
+      width: 80px; height: 80px;
+      background-size: cover; background-position: center 20%;
+      filter: grayscale(100%) contrast(1.1);
+    }
+    .team-member:has(.team-photo) {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      column-gap: 24px;
+    }
+    .team-spacer { margin-top: 40px; }
+    .team-member:has(.team-photo) .team-photo {
+      grid-column: 1; grid-row: 1 / 3;
+      width: 100%; height: 120px;
+    }
+    .team-member:has(.team-photo) .team-name {
+      grid-column: 2; grid-row: 1;
+      margin-bottom: 10px;
+    }
+    .team-member:has(.team-photo) .team-bio {
+      grid-column: 2; grid-row: 2;
+      margin-bottom: 0;
+    }
+    .team-name {
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 28px;
+      margin-bottom: 16px; letter-spacing: -0.01em;
+    }
+    .team-bio {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+      margin-bottom: 20px;
+    }
+    .team-member a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transition: color 0.2s, text-decoration-color 0.2s;
+    }
+    .team-member a:hover {
+      color: var(--accent);
+    }
+    .team-name a {
+      text-underline-offset: 5px;
+    }
+
+
+    .contact-form-wrap {
+      max-width: 480px; margin: 64px auto 0;
+    }
+    .contact-email {
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 28px;
+      letter-spacing: -0.01em; color: var(--accent); text-decoration: none; display: block;
+      margin-top: 32px; transition: opacity 0.2s;
+    }
+    .contact-email:hover { opacity: 0.7; }
+    .form-group { margin-bottom: 24px; }
+    .form-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); display: block; margin-bottom: 8px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 14px 0; border: none;
+      border-bottom: 1px solid var(--border);
+      background: transparent; font-family: 'DM Sans', sans-serif;
+      font-size: 15px; color: var(--text); outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-textarea { resize: vertical; min-height: 100px; }
+    .form-select { cursor: pointer; appearance: none; }
+    .form-submit {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 16px 48px; background: var(--text);
+      color: var(--bg); border: none; cursor: pointer;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 8px;
+    }
+    .form-submit:hover { background: var(--accent); }
+    .contact-form-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); margin-bottom: 28px;
+    }
+
+    .footer {
+      padding: 40px 48px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-text {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: #999; letter-spacing: 0.5px;
+    }
+    .footer-location {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: #999; letter-spacing: 0.5px;
+    }
+
+    .capabilities-list { margin-top: 64px; }
+    .capability-item {
+      display: grid; grid-template-columns: 1fr 2fr;
+      gap: 40px; padding: 36px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .capability-item:first-child { border-top: 1px solid var(--border); }
+    .capability-name {
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 20px;
+      line-height: 1.3; letter-spacing: -0.005em;
+    }
+    .capability-desc {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .steps-list { margin-top: 64px; }
+    .step-item {
+      display: grid; grid-template-columns: 72px 1fr;
+      gap: 32px; padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-item:first-child { border-top: 1px solid var(--border); }
+    .step-number {
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 40px;
+      letter-spacing: -0.02em; color: var(--accent); opacity: 0.35; line-height: 1;
+      padding-top: 4px;
+    }
+    .step-title {
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 22px;
+      margin-bottom: 10px; letter-spacing: -0.01em;
+    }
+    .step-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .use-cases-list { margin-top: 48px; }
+    .use-case-item {
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      line-height: 1.7; color: var(--text-secondary);
+      padding: 10px 0 10px 24px; position: relative; font-weight: 300;
+      border-bottom: 1px solid var(--border);
+    }
+    .use-case-item:first-child { border-top: 1px solid var(--border); }
+    .use-case-item::before {
+      content: '→'; position: absolute; left: 0; color: var(--accent);
+    }
+
+    .page-cta {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 16px 48px; background: var(--text);
+      color: var(--bg); text-decoration: none;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 40px;
+    }
+    .page-cta:hover { background: var(--accent); }
+
+    .creds-strip {
+      display: flex;
+      gap: 32px 48px;
+      align-items: flex-start;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .creds-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted, #888);
+      flex: 0 0 auto;
+      white-space: nowrap;
+      align-self: center;
+    }
+    .creds-items {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px 32px;
+    }
+    .cred-item {
+      flex: 1 1 calc(33.33% - 22px);
+      min-width: 120px;
+      text-decoration: none;
+      color: inherit;
+    }
+    @media (min-width: 1280px) {
+      .cred-item { flex: 1 1 calc(20% - 26px); }
+    }
+    @media (max-width: 680px) {
+      .creds-strip { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 768px) {
+      .nav { padding: 16px 24px; }
+      .nav-links { gap: 16px; }
+      .nav-link { display: none; }
+      .hero { padding: 120px 24px 60px; }
+      .section { padding: 80px 24px; }
+      .problems-grid { grid-template-columns: 1fr; }
+      .approach-grid { grid-template-columns: 1fr; gap: 40px; }
+      .team-grid { grid-template-columns: 1fr; gap: 48px; }
+      .team-member:has(.team-photo) { display: block; }
+      .team-member:has(.team-photo) .team-photo { width: 80px; height: 80px; margin-bottom: 10px; }
+      .team-member:has(.team-photo) .team-name { margin-bottom: 10px; }
+      .theme-switcher { bottom: 12px; right: 12px; }
+      .capability-item { grid-template-columns: 1fr; gap: 12px; }
+      .step-item { grid-template-columns: 48px 1fr; gap: 20px; }
+      .step-number { font-size: 28px; }
+    }
+  </style><style>
+  a.nav-cta { text-decoration: none; }
+
+  .post-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 48px 80px;
+  }
+
+  .post-header {
+    max-width: 720px;
+    margin-bottom: 48px;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .post-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+  }
+
+  .post-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+
+  .post-meta {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .post-meta-sep { color: var(--border); }
+
+  .post-meta a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .post-meta a:hover { color: var(--accent); }
+
+  /* Layout: single column normally, sidebar when TOC is active */
+  .post-body-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .post-body-wrap.has-toc {
+    grid-template-columns: 200px 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .post-toc {
+    position: sticky;
+    top: 100px;
+  }
+
+  .post-toc-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .post-toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .post-toc-item {
+    margin-bottom: 8px;
+  }
+
+  .post-toc-item a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    line-height: 1.4;
+    display: block;
+  }
+
+  .post-toc-item a:hover { color: var(--accent); }
+  .post-toc-h3 { padding-left: 12px; }
+
+  /* Article body */
+  .post-content {
+    max-width: 720px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  .post-content h2,
+  .post-content h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .post-content h2 { font-size: 30px; margin-top: 56px; }
+  .post-content h3 { font-size: 22px; margin-top: 40px; }
+
+  .post-content p { margin-bottom: 20px; }
+
+  .post-content a {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+
+  .post-content a:hover { color: var(--accent); }
+
+  .post-content ul,
+  .post-content ol {
+    padding-left: 24px;
+    margin-bottom: 20px;
+  }
+
+  .post-content li { margin-bottom: 8px; line-height: 1.7; }
+
+  .post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 28px;
+    font-size: 14px;
+  }
+
+  .post-content th,
+  .post-content td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+
+  .post-content th {
+    background: transparent;
+    color: #000000;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .post-content blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 24px;
+    margin: 24px 0;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .post-content code {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 0.88em;
+    background: var(--border);
+    padding: 2px 6px;
+  }
+
+  .post-content pre {
+    background: #1a1a1a;
+    color: #e8e6e1;
+    padding: 24px;
+    overflow-x: auto;
+    margin: 24px 0;
+  }
+
+  .post-content pre code {
+    background: none;
+    padding: 0;
+    font-size: 14px;
+  }
+
+  .post-content figure { margin: 32px 0; }
+
+  .post-content figcaption {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  .post-content img { max-width: 100%; height: auto; }
+
+  /* Diagram figure wrapper — overflow-x so wide SVGs scroll on mobile */
+  .post-diagram {
+    overflow-x: auto;
+  }
+
+  /* Placeholder shown before the real figure is ready */
+  .post-diagram-placeholder {
+    border: 1px dashed var(--border);
+    padding: 40px 32px;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* Note block — contextual aside above the article body */
+  .post-note {
+    border-left: 3px solid var(--accent);
+    background: rgba(13, 115, 119, 0.04);
+    padding: 16px 20px;
+    margin: 0 0 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  /* Footnotes rendered by remark-gfm */
+  .post-content .footnotes {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .post-content .footnotes ol { padding-left: 20px; }
+  .post-content .footnotes li { margin-bottom: 8px; line-height: 1.6; }
+
+  .post-content sup a {
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* Prev / next navigation */
+  .post-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    max-width: 720px;
+  }
+
+  .post-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+    color: var(--text);
+    max-width: 45%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+
+  .post-nav-link:hover { color: var(--accent); }
+
+  .post-nav-label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .post-nav-older { text-align: right; margin-left: auto; }
+
+  .post-back {
+    margin-top: 32px;
+    max-width: 720px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+  }
+
+  .post-back a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+
+  .post-back a:hover { color: var(--accent); }
+
+  @media (max-width: 768px) {
+    .post-wrap { padding: 100px 24px 60px; }
+    .post-body-wrap.has-toc { grid-template-columns: 1fr; }
+    .post-toc { display: none; }
+    .post-nav { flex-direction: column; }
+    .post-nav-older { text-align: left; margin-left: 0; }
+    .post-nav-link { max-width: 100%; }
+  }
+</style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit"><img src="/assets/img/wordmark.png" alt="Modal Resonance" class="nav-logo-img"/></a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Book an intro call</a></div></nav><main class="post-wrap"><header class="post-header"><div class="post-tags"><span class="post-tag">privacy</span><span class="post-tag">GDPR</span><span class="post-tag">PANAME</span><span class="post-tag">CNIL</span><span class="post-tag">membership inference</span><span class="post-tag">AI models</span></div><h1 class="post-title">Towards technical evaluation of AI model anonymity</h1><div class="post-meta"><time dateTime="2026-07-06">July 6, 2026</time><span class="post-meta-sep">·</span><span>8<!-- --> min read</span><span class="post-meta-sep">·</span><span><a href="https://www.linkedin.com/in/oalifdal/" target="_blank" rel="noopener noreferrer">Omar Ali Fdal</a>, <a href="https://www.linkedin.com/in/matteo-giomi/" target="_blank" rel="noopener noreferrer">Dr. Matteo Giomi</a></span></div></header><div class="post-body-wrap has-toc"><aside class="post-toc"><div class="post-toc-label">Contents</div><ol class="post-toc-list"><li class="post-toc-item post-toc-h2"><a href="#introduction">Introduction</a></li><li class="post-toc-item post-toc-h2"><a href="#from-legal-to-technical">From legal to technical</a></li><li class="post-toc-item post-toc-h2"><a href="#testing-paname">Testing PANAME</a></li><li class="post-toc-item post-toc-h3"><a href="#what-we-found">What we found</a></li><li class="post-toc-item post-toc-h3"><a href="#what-it-means-in-practice">What it means in practice</a></li><li class="post-toc-item post-toc-h2"><a href="#looking-ahead">Looking ahead</a></li></ol></aside><article class="post-content"><aside class="post-note"><p>TL;DR: Models trained on personal data are not anonymous by default. Regulators now expect providers to prove anonymity with attack tests, and running those tests has been the bottleneck. We have tested PANAME, a model testing library developed by the CNIL, the ANSSI, INRIA, and the PEReN, which packages state-of-the-art attacks. We used it to evaluate the impact of redacting direct identifiers in a fine-tuning scenario.</p></aside>
+<h2 id="introduction">Introduction</h2>
+<p>Foundation models are pre-trained on text scraped from various sources, including the open web. Some data filtering is applied, removing duplicates or low quality content, but a careful review of what goes into the models is not part of the process. Personal and sensitive data present in any of those scraped pages likely remains in the training set, and ultimately finds its way into the trained model.</p>
+<p>The same applies inside organisations, at a smaller scale. Models are fine-tuned on support tickets, call transcripts, clinical notes, or email archives. This personal data often ends up in the model training, whether or not it is required by the use case.</p>
+<p>The anonymity of a model can therefore rarely be settled by examining the ingestion pipeline. This means that most model providers, and many organizations that fine-tune their own models, cannot demonstrate that personal data was absent from their training data. The assessment has to be made on the model itself.</p>
+<h2 id="from-legal-to-technical">From legal to technical</h2>
+<p>In December 2024, the European Data Protection Board (EDPB) adopted its opinion on personal data in AI models, stating that a model trained on personal data cannot be presumed anonymous in all cases.<sup><a href="#user-content-fn-1" id="user-content-fnref-1" data-footnote-ref="true" aria-describedby="footnote-label">1</a></sup> The assessment has to be made case by case. For a model to qualify as anonymous, the likelihood of extracting personal data relating to training-data subjects from the model itself, or obtaining this data via queries, should be insignificant.</p>
+<p>Moreover, given their complexity and the scale and variety of training data, the EDPB deems that AI models are very likely to require thorough evaluation of the risks of identification. In July 2025, the CNIL produced a guide on the status of an AI model under the GDPR, including a detailed description of the tests and measures that providers need to perform, in order to assess the anonymity of their models and AI systems.<sup><a href="#user-content-fn-2" id="user-content-fnref-2" data-footnote-ref="true" aria-describedby="footnote-label">2</a></sup></p>
+<p>The CNIL lists the possible causes that can lead a model to memorize some of its training data. These include, for example, having direct identifiers (such as names, emails, addresses) in the training set, or the presence of rare records and outliers. Models with very large numbers of parameters are also more prone to memorization, especially if they are trained without proper regularization or dedicated privacy preserving algorithms.</p>
+<p>The CNIL also covers the technical and organisational measures that can be taken during development and training to reduce the likelihood of re-identification, such as, for example, sanitizing the training data to remove identifiers and outliers or employing strong regularization techniques and privacy preserving training algorithms.</p>
+<p>In most cases though, these measures won&#x27;t be sufficient to rule out, a priori, the possibility of successful data reconstruction and the consequent re-identification of data subjects in the training set. <strong>For this reason, reconstruction attacks must be performed</strong>.</p>
+<p>This adversarial evaluation must make use of all the means reasonably likely to be employed, such as additional information on the attacker&#x27;s targets, significant time and money, and the access to state of the art methodology and attack algorithms. In particular, one needs to consider attacks aimed at reconstructing exact fragments of training data, membership inference, exfiltration and reconstruction attacks, as well as empirical measures of the model memorization.</p>
+<p>Such tests are highly technical and require specialized expertise and tools.</p>
+<p>Indeed, many of these tests use refined attack algorithms that are continuously improved and complemented by other methods by the research community. To centralize this effort and facilitate the analysis, the CNIL has started the PANAME project.<sup><a href="#user-content-fn-3" id="user-content-fnref-3" data-footnote-ref="true" aria-describedby="footnote-label">3</a></sup></p>
+<h2 id="testing-paname">Testing PANAME</h2>
+<p>PANAME (Privacy Auditing of AI Models) is a software library for running extraction and re-identification tests on AI models, planned for release as open source by the end of 2026. The project was launched in June 2025 together with PEReN, ANSSI, and INRIA.</p>
+<p>We participated in the first test phase of the library<sup><a href="#user-content-fn-4" id="user-content-fnref-4" data-footnote-ref="true" aria-describedby="footnote-label">4</a></sup> and presented our results to the consortium in June 2026, together with four other participants coming from adtech, energy and utilities, consulting, and frontier AI labs.</p>
+<p>In our tests, we used the library to evaluate and measure the extent to which sanitizing fine tuning data reduced the success of extraction attacks.</p>
+<p>We used public emails from the Enron corpus, with 100 emails as members of the training set and 100 held out as non-members. We fine-tuned a small instruction-tuned Llama 3.2 1B model with LoRA, in two variants.</p>
+<p>The first variant was fine-tuned on cleartext. The second used sanitised text, with direct identifiers detected and replaced with placeholders before training. We used Presidio<sup><a href="#user-content-fn-5" id="user-content-fnref-5" data-footnote-ref="true" aria-describedby="footnote-label">5</a></sup> to cover names, dates, addresses, cities and countries, email addresses, phone numbers and IP addresses.</p>
+<p>We then ran membership inference attacks against the base model and both fine-tuned variants. In essence, membership inference is a classification task where the goal is to infer, given a record (an email in our case), whether or not it was used to fine tune the model. PANAME implements algorithms from the published literature to perform this task. We have used the perplexity-based attack and the Min-K% probability attack.</p>
+<h3 id="what-we-found">What we found</h3>
+<p>We measure attack success as the area under the ROC curve. A value of 0.5 means the attack does no better than guessing.</p>
+<table><thead><tr><th>Model</th><th>Min-K% Prob</th><th>Perplexity</th></tr></thead><tbody><tr><td>Base model, no fine-tuning</td><td>0.47</td><td>0.43</td></tr><tr><td>Fine-tuned on cleartext</td><td>0.74</td><td>0.72</td></tr><tr><td>Fine-tuned on sanitised text</td><td>0.66</td><td>0.65</td></tr></tbody></table>
+<p><strong>The attacks fail on the base model.</strong> Both attacks score near the random guessing threshold of 0.5 before fine-tuning. This is what we expect (if the model was not trained on the fine-tuning data). The signal we want to measure is created by the fine-tuning step, not inherited from pre-training.</p>
+<p><strong>Fine-tuning on one hundred emails creates a clear signal.</strong> Both attacks move well above random guessing, demonstrating that using personal data in fine-tuning is enough to make the model carry information about who was in the set.</p>
+<p><strong>Sanitisation reduces the signal.</strong> Redacting direct identifiers reduces the attack success by 0.1 of AUC. This effect extends in the region that matters most for privacy, the low false positive regime, where an attacker makes confident claims about a small number of records. Up to a false positive rate of one percent, the AUC of both attacks drops by roughly 60%.</p>
+<figure class="post-diagram"><img src="/writing/assets/paname-ai-model-anonymity-fig1.png" alt="Bar chart comparing PerplexityMIA and MinKProbMIA attack AUC across the base model, the model fine-tuned on cleartext, and the model fine-tuned on sanitized text, with a dashed line marking the 0.5 random-guessing threshold."/><figcaption>Figure 1. Membership inference attack success (AUC) for PerplexityMIA and Min-K% Prob, measured against the base model and both fine-tuned variants. The dashed line marks the random-guessing threshold of 0.5.</figcaption></figure>
+<h3 id="what-it-means-in-practice">What it means in practice</h3>
+<p>Our experiment supports that data sanitization before training or fine-tuning lowers measured privacy risk without eliminating it entirely. Membership inference compares how confidently the model handles a training record against how it handles records it never saw. Even if identifiers are removed, a large part of the training email body is left untouched, leaving enough signal in the model weights for the attack to pick up on.</p>
+<p>As we have demonstrated, a model fine-tuned on redacted personal data may still tell an attacker that a record was in the training set. The extent to which this happens depends on how the fine-tuning is done, the size of the dataset, etc. For a precise characterization of the impact of all these factors in a real world deployment, the evaluation needs to cover a wider range of attack families, repeated configurations, and realistic threat models.</p>
+<p>Our small experiment demonstrates that redacting fine tuning data is a useful mitigation but does not resolve the question of model anonymity. It is a measure, rather than an outcome.</p>
+<figure class="post-diagram"><img src="/writing/assets/paname-ai-model-anonymity-fig2.png" alt="Flowchart from the CNIL guide showing that, in all cases, attack tests must be conducted on an AI system to determine the likelihood of re-identification of personal training data, before the system can be presumed to fall outside the scope of the GDPR."/><figcaption>Figure 2. Decision framework from the CNIL&#x27;s guide on the status of an AI model under the GDPR: attack tests to assess the likelihood of re-identification are required in all cases, regardless of the measures taken during development.</figcaption></figure>
+<h2 id="looking-ahead">Looking ahead</h2>
+<p>By providing a centralized, open source repository of state of the art attacks, PANAME makes evaluating model anonymity easier, allowing teams to perform the kind of analysis requested by regulators. This becomes more important as agentic systems spread. In their July 2026 note, the CNIL and the CIANum describe systems where personal data circulates between services, interaction history and persistent memory accumulate, and responsibility becomes harder to allocate across a decentralised chain.<sup><a href="#user-content-fn-6" id="user-content-fnref-6" data-footnote-ref="true" aria-describedby="footnote-label">6</a></sup> Models sit inside those systems, and every system built on a model inherits its status.</p>
+<p>We are looking forward to the next phases of PANAME and to the publication of the library.</p>
+<section data-footnotes="true" class="footnotes"><h2 class="sr-only" id="footnote-label">Footnotes</h2>
+<ol>
+<li id="user-content-fn-1">
+<p>EDPB, Opinion 28/2024 on certain data protection aspects related to the processing of personal data in the context of AI models, December 2024. <a href="https://www.edpb.europa.eu/documents/opinion-of-the-board-art-64/opinion-282024-on-certain-data-protection-aspects-related-to_en">https://www.edpb.europa.eu/documents/opinion-of-the-board-art-64/opinion-282024-on-certain-data-protection-aspects-related-to_en</a> <a href="#user-content-fnref-1" data-footnote-backref="" aria-label="Back to reference 1" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-2">
+<p>CNIL, Analysing the status of an AI model with regard to the GDPR, January 2026. <a href="https://www.cnil.fr/en/analysing-status-ai-model-regard-gdpr">https://www.cnil.fr/en/analysing-status-ai-model-regard-gdpr</a> <a href="#user-content-fnref-2" data-footnote-backref="" aria-label="Back to reference 2" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-3">
+<p>CNIL, PANAME: a partnership for auditing the confidentiality of AI models, June 2025. <a href="https://www.cnil.fr/fr/paname-un-partenariat-pour-laudit-de-la-confidentialite-des-modeles-dia">https://www.cnil.fr/fr/paname-un-partenariat-pour-laudit-de-la-confidentialite-des-modeles-dia</a> <a href="#user-content-fnref-3" data-footnote-backref="" aria-label="Back to reference 3" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-4">
+<p>CNIL, Call for expressions of interest: testing the PANAME library, February 2026. <a href="https://www.cnil.fr/fr/projet-paname-participez-aux-tests-dun-outil-daudit-rgpd-des-modeles-dia">https://www.cnil.fr/fr/projet-paname-participez-aux-tests-dun-outil-daudit-rgpd-des-modeles-dia</a> <a href="#user-content-fnref-4" data-footnote-backref="" aria-label="Back to reference 4" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-5">
+<p>Microsoft Presidio. <a href="https://presidio.dataprivacystack.org/">https://presidio.dataprivacystack.org/</a> <a href="#user-content-fnref-5" data-footnote-backref="" aria-label="Back to reference 5" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-6">
+<p>CNIL and CIANum, exploratory note on agentic AI and personal data, July 2026. <a href="https://www.cnil.fr/fr/ia-agentique-cnil-cianum-note">https://www.cnil.fr/fr/ia-agentique-cnil-cianum-note</a> <a href="#user-content-fnref-6" data-footnote-backref="" aria-label="Back to reference 6" class="data-footnote-backref">↩</a></p>
+</li>
+</ol>
+</section></article></div><nav class="post-nav" aria-label="Post navigation"><a href="/writing/ieee-synthetic-data-2025/" class="post-nav-link post-nav-older"><span class="post-nav-label">Older</span><span>IEEE report on synthetic data: privacy risks, metrics, and governance.</span></a></nav><div class="post-back"><a href="/writing/">← All writing</a></div></main><footer class="footer"><div class="footer-text">Modal Resonance · AI Advisory · Berlin, Germany</div><a href="/writing/feed.xml" class="footer-text" style="color:inherit;text-decoration:none">RSS</a></footer></div></div>
+</body>
+</html>
