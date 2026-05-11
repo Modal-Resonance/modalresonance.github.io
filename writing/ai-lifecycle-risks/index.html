@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#F7F9FA" />
+
+  <title>Mapping Privacy Risk Across the AI Lifecycle | Modal Resonance</title>
+  <meta name="description" content="A structured breakdown of where privacy risk lives across the four phases of the AI lifecycle, and what genuinely changes with generative AI versus traditional ML." />
+
+  <link rel="canonical" href="https://modalresonance.com/writing/ai-lifecycle-risks/" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+
+  <link rel="alternate" type="application/rss+xml" title="Modal Resonance Writing" href="https://modalresonance.com/writing/feed.xml" />
+
+  <!-- OpenGraph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Modal Resonance" />
+  <meta property="og:title" content="Mapping Privacy Risk Across the AI Lifecycle | Modal Resonance" />
+  <meta property="og:description" content="A structured breakdown of where privacy risk lives across the four phases of the AI lifecycle, and what genuinely changes with generative AI versus traditional ML." />
+  <meta property="og:url" content="https://modalresonance.com/writing/ai-lifecycle-risks/" />
+  <meta property="og:image" content="https://modalresonance.com/assets/img/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Mapping Privacy Risk Across the AI Lifecycle | Modal Resonance" />
+  <meta name="twitter:description" content="A structured breakdown of where privacy risk lives across the four phases of the AI lifecycle, and what genuinely changes with generative AI versus traditional ML." />
+  <meta name="twitter:image" content="https://modalresonance.com/assets/img/og-image.svg" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://modalresonance.com/writing/ai-lifecycle-risks/#article",
+      "headline": "Mapping Privacy Risk Across the AI Lifecycle",
+      "description": "A structured breakdown of where privacy risk lives across the four phases of the AI lifecycle, and what genuinely changes with generative AI versus traditional ML.",
+      "url": "https://modalresonance.com/writing/ai-lifecycle-risks/",
+      "datePublished": "2026-05-05",
+      "author": [
+        {
+          "@type": "Person",
+          "name": "Omar Ali Fdal"
+        },
+        {
+          "@type": "Person",
+          "name": "Matteo Giomi"
+        }
+      ],
+      "publisher": {
+        "@id": "https://modalresonance.com/#org"
+      },
+      "image": "https://modalresonance.com/assets/img/og-image.svg",
+      "keywords": [
+        "AI risk",
+        "privacy",
+        "AI governance",
+        "GDPR",
+        "generative AI"
+      ],
+      "isPartOf": {
+        "@type": "Blog",
+        "@id": "https://modalresonance.com/writing/#blog"
+      },
+      "inLanguage": "en"
+    }
+  ]
+}
+  </script>
+
+  <script defer data-domain="modalresonance.com" src="https://plausible.io/js/script.js"></script>
+
+  <style>body { margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <div id="root"><div style="background:#F7F9FA;color:#1a1a1a;min-height:100vh"><style>
+    
+  /* DM Sans - latin-ext */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-italic-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* DM Sans - latin */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-italic-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* DM Sans - latin-ext */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-normal-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* DM Sans - latin */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-normal-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* Instrument Serif - latin-ext */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-italic-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* Instrument Serif - latin */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-italic-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* Instrument Serif - latin-ext */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-normal-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* Instrument Serif - latin */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-normal-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --text: #1a1a1a;
+--text-secondary: #4a5568;
+--bg: #F7F9FA;
+--bg-dark: #0B1726;
+--accent: #0D7377;
+--accent-light: #14919B;
+--border: #dce3e8;
+    }
+
+    .theme-switcher {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      display: none; gap: 8px; padding: 10px 14px;
+      background: rgba(0,0,0,0.85); border-radius: 8px;
+      backdrop-filter: blur(12px);
+    }
+    .theme-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid transparent; cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .theme-btn:hover { transform: scale(1.15); }
+    .theme-btn.active { border-color: #fff; }
+    .theme-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      color: #999; letter-spacing: 0.5px;
+      display: flex; align-items: center; margin-right: 6px;
+    }
+
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 48px;
+      background: rgba(247, 249, 250, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 22px; font-weight: 400; color: var(--text);
+      letter-spacing: 0.3px; cursor: pointer;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-link {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: var(--text-secondary); text-decoration: none;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      cursor: pointer; border: none; background: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-cta {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 10px 24px; background: var(--text);
+      color: var(--bg); border: none; cursor: pointer;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      transition: background 0.25s;
+    }
+    .nav-cta:hover { background: var(--accent); }
+
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; padding: 140px 48px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -200px; right: -200px;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(13, 115, 119, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 32px;
+    }
+    .hero-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(42px, 6vw, 72px); line-height: 1.08;
+      font-weight: 400; max-width: 800px;
+      margin-bottom: 32px;
+    }
+    .hero-sub {
+      font-family: 'DM Sans', sans-serif; font-size: 18px;
+      line-height: 1.7; color: var(--text-secondary);
+      max-width: 560px; font-weight: 300;
+    }
+    .hero-scroll {
+      margin-top: 80px; display: flex; align-items: center; gap: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); cursor: pointer;
+      border: none; background: none;
+    }
+    .hero-scroll:hover { color: var(--accent); }
+    .scroll-line {
+      width: 48px; height: 1px; background: var(--accent);
+      transition: width 0.3s;
+    }
+    .hero-scroll:hover .scroll-line { width: 64px; }
+
+    .section { padding: 120px 48px; }
+    .section-dark { background: var(--bg-dark); color: #e8e6e1; }
+    .section-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(32px, 4vw, 48px); line-height: 1.15;
+      font-weight: 400; margin-bottom: 20px; margin-left: -0.04em;
+    }
+    .section-subtitle {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.7; color: var(--text-secondary);
+      max-width: 900px; font-weight: 300;
+    }
+    .section-dark .section-subtitle { color: #999; }
+    .section-dark .section-label { color: var(--accent-light); }
+
+    .problems-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; margin-top: 64px;
+    }
+    .problems-grid > div { height: 100%; }
+    .problem-card {
+      /* background: #fff; */
+      background: transparent;
+      padding: 48px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: all 0.35s ease; position: relative;
+      overflow: hidden;
+      height: 100%;
+    }
+    .problem-card:hover { border-color: transparent; box-shadow: 0 8px 40px rgba(0,0,0,0.06); }
+    .problem-tag {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 20px; font-weight: 500;
+      color: var(--card-color);
+    }
+    .problem-title {
+      font-family: 'Instrument Serif', serif; font-size: 24px;
+      line-height: 1.25; margin-bottom: 16px; letter-spacing: 0.3px;
+    }
+    .problem-desc {
+      font-family: 'DM Sans', sans-serif; font-size: 16x;
+      line-height: 1.7; color: var(--text-secondary); font-weight: 300;
+    }
+    .problem-expand {
+      margin-top: 24px; overflow: hidden;
+      transition: max-height 0.5s ease, opacity 0.4s ease;
+    }
+    .problem-expand-inner { padding-top: 24px; border-top: 1px solid var(--border); }
+    .signal-item {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.6; color: var(--text-secondary);
+      padding: 6px 0 6px 20px; position: relative; font-weight: 300;
+    }
+    .signal-item::before {
+      content: '→'; position: absolute; left: 0; color: var(--accent);
+    }
+    .problem-approach {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.7; color: var(--text); margin-top: 20px;
+      font-weight: 400; font-style: italic;
+    }
+
+    .problem-indicators-label {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #999; margin-bottom: 12px;
+    }
+
+    .problem-card-solid { color: #F6F3EF; border-color: transparent; }
+    .problem-card-solid .problem-tag { color: rgba(246, 243, 239, 0.99); }
+    .problem-card-solid .problem-desc,
+    .problem-card-solid .signal-item { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .signal-item::before { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-approach { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-indicators-label { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-expand-inner { border-top-color: rgba(255,255,255,0.15); }
+    .problem-card-solid:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.15); border-color: transparent; }
+
+
+    .approach-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 64px; margin-top: 80px;
+    }
+    .approach-number {
+      font-family: 'Instrument Serif', serif; font-size: 48px;
+      color: #0D7377; margin-bottom: 20px;
+    }
+    .approach-name {
+      font-family: 'Instrument Serif', serif; font-size: 22px;
+      margin-bottom: 12px; color: #e8e6e1;
+    }
+    .approach-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.75; color: #888; font-weight: 300;
+    }
+
+    .background-section { margin-top: 64px; max-width: 720px; }
+    .background-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.85; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .team-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; margin-top: 34px;
+    }
+    .team-intro {
+      grid-column: 1 / -1; max-width: 680px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+      margin-bottom: 16px;
+    }
+    .team-member {}
+    .team-photo {
+      width: 80px; height: 80px;
+      background-size: cover; background-position: center 20%;
+      filter: grayscale(100%) contrast(1.1);
+    }
+    .team-member:has(.team-photo) {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      column-gap: 24px;
+      margin-top: 40px;
+    }
+    .team-member:has(.team-photo) .team-role {
+      grid-column: 2; grid-row: 1;
+      margin-top: 0;
+    }
+    .team-member:has(.team-photo) .team-photo {
+      grid-column: 1; grid-row: 2 / 4;
+      width: 100%; height: 120px;
+    }
+    .team-member:has(.team-photo) .team-name {
+      grid-column: 2; grid-row: 2;
+      margin-bottom: 10px;
+    }
+    .team-member:has(.team-photo) .team-bio {
+      grid-column: 2; grid-row: 3;
+      margin-bottom: 0;
+    }
+    .team-role {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+      margin-top: 40px;
+    }
+    .team-name {
+      font-family: 'Instrument Serif', serif; font-size: 28px;
+      margin-bottom: 16px; letter-spacing: 0.3px;
+    }
+    .team-bio {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+      margin-bottom: 20px;
+    }
+    .team-member a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transition: color 0.2s, text-decoration-color 0.2s;
+    }
+    .team-member a:hover {
+      color: var(--accent);
+    }
+    .team-name a {
+      text-underline-offset: 5px;
+    }
+
+
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; margin-top: 64px;
+    }
+    .contact-text {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+    .contact-email {
+      font-family: 'Instrument Serif', serif; font-size: 28px;
+      color: var(--accent); text-decoration: none; display: block;
+      margin-top: 32px; transition: opacity 0.2s;
+    }
+    .contact-email:hover { opacity: 0.7; }
+    .form-group { margin-bottom: 24px; }
+    .form-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); display: block; margin-bottom: 8px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 14px 0; border: none;
+      border-bottom: 1px solid var(--border);
+      background: transparent; font-family: 'DM Sans', sans-serif;
+      font-size: 15px; color: var(--text); outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-textarea { resize: vertical; min-height: 100px; }
+    .form-select { cursor: pointer; appearance: none; }
+    .form-submit {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 16px 48px; background: var(--text);
+      color: var(--bg); border: none; cursor: pointer;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 8px;
+    }
+    .form-submit:hover { background: var(--accent); }
+    .contact-book-btn {
+      display: inline-block; text-decoration: none;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 18px 48px; background: var(--text);
+      color: var(--bg); cursor: pointer;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 32px;
+    }
+    .contact-book-btn:hover { background: var(--accent); }
+    .contact-form-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); margin-bottom: 28px;
+    }
+
+    .footer {
+      padding: 40px 48px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-text {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: #999; letter-spacing: 0.5px;
+    }
+    .footer-location {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: #999; letter-spacing: 0.5px;
+    }
+
+    .capabilities-list { margin-top: 64px; }
+    .capability-item {
+      display: grid; grid-template-columns: 1fr 2fr;
+      gap: 40px; padding: 36px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .capability-item:first-child { border-top: 1px solid var(--border); }
+    .capability-name {
+      font-family: 'Instrument Serif', serif; font-size: 20px;
+      line-height: 1.3; letter-spacing: 0.3px;
+    }
+    .capability-desc {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .steps-list { margin-top: 64px; }
+    .step-item {
+      display: grid; grid-template-columns: 72px 1fr;
+      gap: 32px; padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-item:first-child { border-top: 1px solid var(--border); }
+    .step-number {
+      font-family: 'Instrument Serif', serif; font-size: 40px;
+      color: var(--accent); opacity: 0.35; line-height: 1;
+      padding-top: 4px;
+    }
+    .step-title {
+      font-family: 'Instrument Serif', serif; font-size: 22px;
+      margin-bottom: 10px; letter-spacing: 0.3px;
+    }
+    .step-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .use-cases-list { margin-top: 48px; }
+    .use-case-item {
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      line-height: 1.7; color: var(--text-secondary);
+      padding: 10px 0 10px 24px; position: relative; font-weight: 300;
+      border-bottom: 1px solid var(--border);
+    }
+    .use-case-item:first-child { border-top: 1px solid var(--border); }
+    .use-case-item::before {
+      content: '→'; position: absolute; left: 0; color: var(--accent);
+    }
+
+    .page-cta {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 16px 48px; background: var(--text);
+      color: var(--bg); text-decoration: none;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 40px;
+    }
+    .page-cta:hover { background: var(--accent); }
+
+    .creds-strip {
+      display: flex;
+      gap: 32px 48px;
+      align-items: flex-start;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .creds-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted, #888);
+      flex: 0 0 auto;
+      white-space: nowrap;
+      align-self: center;
+    }
+    .creds-items {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px 32px;
+    }
+    .cred-item {
+      flex: 1 1 calc(33.33% - 22px);
+      min-width: 120px;
+      text-decoration: none;
+      color: inherit;
+    }
+    @media (min-width: 1280px) {
+      .cred-item { flex: 1 1 calc(20% - 26px); }
+    }
+    @media (max-width: 680px) {
+      .creds-strip { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 768px) {
+      .nav { padding: 16px 24px; }
+      .nav-links { gap: 16px; }
+      .nav-link { display: none; }
+      .hero { padding: 120px 24px 60px; }
+      .section { padding: 80px 24px; }
+      .problems-grid { grid-template-columns: 1fr; }
+      .approach-grid { grid-template-columns: 1fr; gap: 40px; }
+      .team-grid { grid-template-columns: 1fr; gap: 48px; }
+      .team-member:has(.team-photo) { display: block; }
+      .team-member:has(.team-photo) .team-photo { width: 80px; height: 80px; margin-bottom: 10px; }
+      .team-member:has(.team-photo) .team-role { margin-top: 0; }
+      .team-member:has(.team-photo) .team-name { margin-bottom: 10px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .theme-switcher { bottom: 12px; right: 12px; }
+      .capability-item { grid-template-columns: 1fr; gap: 12px; }
+      .step-item { grid-template-columns: 48px 1fr; gap: 20px; }
+      .step-number { font-size: 28px; }
+    }
+  </style><style>
+  a.nav-cta { text-decoration: none; }
+
+  .post-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 48px 80px;
+  }
+
+  .post-header {
+    max-width: 720px;
+    margin-bottom: 48px;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .post-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+  }
+
+  .post-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.1;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+  }
+
+  .post-meta {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .post-meta-sep { color: var(--border); }
+
+  .post-meta a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .post-meta a:hover { color: var(--accent); }
+
+  /* Layout: single column normally, sidebar when TOC is active */
+  .post-body-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .post-body-wrap.has-toc {
+    grid-template-columns: 200px 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .post-toc {
+    position: sticky;
+    top: 100px;
+  }
+
+  .post-toc-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .post-toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .post-toc-item {
+    margin-bottom: 8px;
+  }
+
+  .post-toc-item a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    line-height: 1.4;
+    display: block;
+  }
+
+  .post-toc-item a:hover { color: var(--accent); }
+  .post-toc-h3 { padding-left: 12px; }
+
+  /* Article body */
+  .post-content {
+    max-width: 720px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  .post-content h2,
+  .post-content h3 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .post-content h2 { font-size: 30px; margin-top: 56px; }
+  .post-content h3 { font-size: 22px; margin-top: 40px; }
+
+  .post-content p { margin-bottom: 20px; }
+
+  .post-content a {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+
+  .post-content a:hover { color: var(--accent); }
+
+  .post-content ul,
+  .post-content ol {
+    padding-left: 24px;
+    margin-bottom: 20px;
+  }
+
+  .post-content li { margin-bottom: 8px; line-height: 1.7; }
+
+  .post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 28px;
+    font-size: 14px;
+  }
+
+  .post-content th,
+  .post-content td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+
+  .post-content th {
+    background: var(--bg-dark, #0B1726);
+    color: #e8e6e1;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .post-content blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 24px;
+    margin: 24px 0;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .post-content code {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 0.88em;
+    background: var(--border);
+    padding: 2px 6px;
+  }
+
+  .post-content pre {
+    background: #1a1a1a;
+    color: #e8e6e1;
+    padding: 24px;
+    overflow-x: auto;
+    margin: 24px 0;
+  }
+
+  .post-content pre code {
+    background: none;
+    padding: 0;
+    font-size: 14px;
+  }
+
+  .post-content figure { margin: 32px 0; }
+
+  .post-content figcaption {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  .post-content img { max-width: 100%; height: auto; }
+
+  /* Diagram figure wrapper — overflow-x so wide SVGs scroll on mobile */
+  .post-diagram {
+    overflow-x: auto;
+  }
+
+  /* Placeholder shown before the real figure is ready */
+  .post-diagram-placeholder {
+    border: 1px dashed var(--border);
+    padding: 40px 32px;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* Note block — contextual aside above the article body */
+  .post-note {
+    border-left: 3px solid var(--accent);
+    background: rgba(13, 115, 119, 0.04);
+    padding: 16px 20px;
+    margin: 0 0 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  /* Footnotes rendered by remark-gfm */
+  .post-content .footnotes {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .post-content .footnotes ol { padding-left: 20px; }
+  .post-content .footnotes li { margin-bottom: 8px; line-height: 1.6; }
+
+  .post-content sup a {
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* Prev / next navigation */
+  .post-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    max-width: 720px;
+  }
+
+  .post-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+    color: var(--text);
+    max-width: 45%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+
+  .post-nav-link:hover { color: var(--accent); }
+
+  .post-nav-label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .post-nav-older { text-align: right; margin-left: auto; }
+
+  .post-back {
+    margin-top: 32px;
+    max-width: 720px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+  }
+
+  .post-back a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+
+  .post-back a:hover { color: var(--accent); }
+
+  @media (max-width: 768px) {
+    .post-wrap { padding: 100px 24px 60px; }
+    .post-body-wrap.has-toc { grid-template-columns: 1fr; }
+    .post-toc { display: none; }
+    .post-nav { flex-direction: column; }
+    .post-nav-older { text-align: left; margin-left: 0; }
+    .post-nav-link { max-width: 100%; }
+  }
+</style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit">Modal Resonance</a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Book an intro call</a></div></nav><main class="post-wrap"><header class="post-header"><div class="post-tags"><span class="post-tag">AI risk</span><span class="post-tag">privacy</span><span class="post-tag">AI governance</span><span class="post-tag">GDPR</span><span class="post-tag">generative AI</span></div><h1 class="post-title">Mapping Privacy Risk Across the AI Lifecycle</h1><div class="post-meta"><time dateTime="2026-05-05">May 5, 2026</time><span class="post-meta-sep">·</span><span>12<!-- --> min read</span><span class="post-meta-sep">·</span><span><a href="https://www.linkedin.com/in/oalifdal/" target="_blank" rel="noopener noreferrer">Omar Ali Fdal</a>, <a href="https://www.linkedin.com/in/matteo-giomi/" target="_blank" rel="noopener noreferrer">Dr. Matteo Giomi</a></span></div></header><div class="post-body-wrap has-toc"><aside class="post-toc"><div class="post-toc-label">Contents</div><ol class="post-toc-list"><li class="post-toc-item post-toc-h2"><a href="#phase-1-exploration">Phase 1: Exploration</a></li><li class="post-toc-item post-toc-h2"><a href="#phase-2-training">Phase 2: Training</a></li><li class="post-toc-item post-toc-h2"><a href="#phase-3-deployment">Phase 3: Deployment</a></li><li class="post-toc-item post-toc-h2"><a href="#phase-4-inference">Phase 4: Inference</a></li><li class="post-toc-item post-toc-h2"><a href="#what-actually-changes-with-generative-ai">What Actually Changes with Generative AI</a></li><li class="post-toc-item post-toc-h2"><a href="#implications-for-privacy-and-governance">Implications for Privacy and Governance</a></li></ol></aside><article class="post-content"><aside class="post-note"><p>TL;DR: Generative AI is often discussed as if it were a new category of privacy risk.
+In practice, it shares its lifecycle with traditional machine learning, and many of the underlying risks are the same.
+This piece walks through the four phases of that lifecycle, identifies the privacy risks at each, and clarifies what genuinely changes with large language models and what does not.</p></aside>
+<p>Organizations deploying generative AI often treat it as entirely new privacy risk territory.
+That framing is incomplete in two ways.
+First, generative AI shares its lifecycle with traditional machine learning.
+Second, the established privacy risks of traditional ML have not disappeared just because attention has moved to large language models.</p>
+<p>In practical terms, privacy obligations under GDPR and the EU AI Act attach to data flows and processing activities, not to model architectures.
+The EDPB&#x27;s Opinion 28/2024 on AI models reinforces this view by assessing privacy risk through the development and deployment phases of AI systems rather than through the model class.<sup><a href="#user-content-fn-1" id="user-content-fnref-1" data-footnote-ref="true" aria-describedby="footnote-label">1</a></sup>
+Designing safeguards for generative AI solutions starts with understanding which risks emerge at which stage of the lifecycle, and which of those risks are genuinely new.</p>
+<p>This piece breaks down the AI lifecycle into four distinct phases: exploration, training, deployment, and inference. For each phase, it identifies the privacy risks at stake, and clarifies what changes with generative AI and what does not.</p>
+<p>Whether the system is a fraud detection classifier or a large language model, the lifecycle structure is the same.
+What changes between them is the shape of the risk that lives in each phase.
+This view is reflected in NIST&#x27;s AI Risk Management Framework and its Generative AI Profile, both of which structure risk management around lifecycle stages common to all AI systems.<sup><a href="#user-content-fn-2" id="user-content-fnref-2" data-footnote-ref="true" aria-describedby="footnote-label">2</a></sup><sup><a href="#user-content-fn-3" id="user-content-fnref-3" data-footnote-ref="true" aria-describedby="footnote-label">3</a></sup>
+Some frameworks add a fifth phase for monitoring. We treat it separately here to keep the focus on the data and model lifecycle itself.</p>
+<p>Each phase carries a distinct risk profile. Treating &quot;AI risk&quot; as a single category obscures more than it reveals. The starting point of any serious privacy assessment is to ask which risks live at which phase.</p>
+<figure class="post-diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 490" width="100%" height="100%" style="display:block;min-width:700px"><defs><marker id="fig1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#0D7377"></path></marker></defs><style>
+        .fig1-phase-label   { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px; fill: #4a5568; letter-spacing: 1px; text-transform: uppercase; }
+        .fig1-outcome-label { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px; fill: #4a5568; letter-spacing: 1px; text-transform: uppercase; }
+        .fig1-risks-label   { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px; fill: #0D7377; letter-spacing: 1px; text-transform: uppercase; }
+        .fig1-header-text   { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 24px; fill: #1a1a1a; text-anchor: middle; }
+        .fig1-goal-text     { font-family: 'DM Sans', sans-serif; font-size: 16px; fill: #4a5568; text-anchor: middle; }
+        .fig1-risk-title    { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 18px; fill: #0D7377; text-anchor: middle; }
+        .fig1-list-text     { font-family: 'DM Sans', sans-serif; font-size: 14px; fill: #1a1a1a; text-anchor: start; }
+        .fig1-bg-panel      { fill: #eef2f5; stroke: #dce3e8; stroke-width: 1; }
+        .fig1-risk-arrow    { stroke: #0D7377; stroke-width: 1.5; fill: none; }
+      </style><rect x="120" y="40" width="250" height="430" class="fig1-bg-panel"></rect><text x="245" y="82" class="fig1-header-text">Exploration</text><line x1="120" y1="110" x2="363" y2="110" class="fig1-risk-arrow" marker-end="url(#fig1-arrow)"></line><text x="245" y="148" class="fig1-goal-text"><tspan x="245" dy="0">Identify data sources,</tspan><tspan x="245" dy="22">records, attributes.</tspan></text><text x="245" y="236" class="fig1-risk-title">Internal data exposure</text><text x="138" y="272" class="fig1-list-text">• Data mishandling and leaks</text><text x="138" y="302" class="fig1-list-text">• Unlawful Data reuse</text><rect x="390" y="40" width="250" height="430" class="fig1-bg-panel"></rect><text x="515" y="82" class="fig1-header-text">Training</text><line x1="390" y1="110" x2="633" y2="110" class="fig1-risk-arrow" marker-end="url(#fig1-arrow)"></line><text x="515" y="148" class="fig1-goal-text"><tspan x="515" dy="0">Train and optimize</tspan><tspan x="515" dy="22">ML &amp; AI algorithms</tspan></text><text x="515" y="236" class="fig1-risk-title">Learning &quot;too much&quot;</text><text x="408" y="272" class="fig1-list-text">• Over-fitting</text><text x="408" y="302" class="fig1-list-text">• Learning biases</text><text x="408" y="332" class="fig1-list-text">• Memorization</text><text x="408" y="362" class="fig1-list-text">• Hidden sensitive correlations</text><rect x="660" y="40" width="250" height="430" class="fig1-bg-panel"></rect><text x="785" y="82" class="fig1-header-text">Deployment</text><line x1="660" y1="110" x2="903" y2="110" class="fig1-risk-arrow" marker-end="url(#fig1-arrow)"></line><text x="785" y="148" class="fig1-goal-text"><tspan x="785" dy="0">Application of models</tspan><tspan x="785" dy="22">for practical solutions</tspan></text><text x="785" y="236" class="fig1-risk-title">Misuse and data disclosure</text><text x="678" y="272" class="fig1-list-text">• Data retention and storage</text><text x="678" y="302" class="fig1-list-text"><tspan x="678" dy="0">• Adaptive learning and</tspan><tspan x="693" dy="18">model updates</tspan></text><text x="678" y="350" class="fig1-list-text">• Data sharing with third-parties</text><text x="678" y="380" class="fig1-list-text">• Security risks</text><rect x="930" y="40" width="250" height="430" class="fig1-bg-panel"></rect><text x="1055" y="82" class="fig1-header-text">Inference</text><line x1="930" y1="110" x2="1173" y2="110" class="fig1-risk-arrow" marker-end="url(#fig1-arrow)"></line><text x="1055" y="148" class="fig1-goal-text"><tspan x="1055" dy="0">Make predictions or</tspan><tspan x="1055" dy="22">generate responses</tspan><tspan x="1055" dy="22">based on user inputs</tspan></text><text x="1055" y="236" class="fig1-risk-title">External data exposure</text><text x="948" y="272" class="fig1-list-text"><tspan x="948" dy="0">• Exposure in queries</tspan><tspan x="963" dy="18">&amp; responses</tspan></text><text x="948" y="320" class="fig1-list-text">• Adaptive learning and feedback</text><text x="948" y="350" class="fig1-list-text"><tspan x="948" dy="0">• Profiling, bias &amp;</tspan><tspan x="963" dy="18">discrimination</tspan></text><text x="948" y="396" class="fig1-list-text">• Linkability</text><text x="948" y="426" class="fig1-list-text"><tspan x="948" dy="0">• Membership, reconstruction,</tspan><tspan x="963" dy="18">extraction, inference, etc.</tspan></text><text x="36" y="82" class="fig1-phase-label">Phase</text><text x="36" y="165" class="fig1-outcome-label">Outcome</text><text x="36" y="236" class="fig1-risks-label">Risks</text></svg><figcaption>Figure 1. Privacy risk categories distributed across the four phases of the AI lifecycle.</figcaption></figure>
+<h2 id="phase-1-exploration">Phase 1: Exploration</h2>
+<p>The exploration phase is where teams define a problem, identify candidate datasets, and assess whether an idea is worth pursuing. It is internal, exploratory, and typically does not involve external user interaction.</p>
+<p>It is also the phase where governance is weakest. Innovation often runs ahead of formal review. Data gets copied to a sandbox, moved into a notebook, shared with a collaborator, and reused for purposes it was not originally collected for. This happens because validating an idea quickly is the point of the phase. The cost of friction at this stage is felt by data scientists. The cost of weak governance is felt later, usually by privacy and legal teams.</p>
+<p>The risks here are not dramatic, but rather foundational. Dataset lineage gets blurred. Lawful basis for processing becomes harder to establish. By the time a project enters formal development, decisions made informally during exploration are difficult to undo. Many compliance failures further down the pipeline can be traced back to this phase.</p>
+<h2 id="phase-2-training">Phase 2: Training</h2>
+<p>The training phase uses real-world data to fit and optimize a model. Across model types, the central risk is that the model learns more than it was supposed to.</p>
+<p>This takes several concrete forms. Overfitting is the simplest case.
+The model becomes too specific to its training data and effectively memorizes parts of it.
+Bias absorption is another. Real-world data carries real-world biases.
+A hiring model trained on historical resumes will learn the patterns of past hiring decisions, including the biased ones, and will reproduce them unless explicit steps are taken to prevent it.
+The phenomenon has been studied extensively across the fairness and machine learning literature, with recent work mapping the kinds of bias most relevant to EU AI Act compliance.<sup><a href="#user-content-fn-4" id="user-content-fnref-4" data-footnote-ref="true" aria-describedby="footnote-label">4</a></sup><sup><a href="#user-content-fn-5" id="user-content-fnref-5" data-footnote-ref="true" aria-describedby="footnote-label">5</a></sup>
+Memorization in the strict sense is a third concern. Some models can reproduce parts of their training data verbatim, including personally identifiable information, as a response to specific inputs.<sup><a href="#user-content-fn-6" id="user-content-fnref-6" data-footnote-ref="true" aria-describedby="footnote-label">6</a></sup></p>
+<p>The risk that is most often underestimated is hidden correlations.
+A common assumption is that removing a sensitive attribute from a dataset removes the information it carries.
+It does not, if that attribute is correlated with others that remain.
+Removing &quot;race&quot; from a dataset, for example, does not prevent a model from learning racial patterns when zip code, surname, or income carry the same signal.
+The model learns the correlated structure and recovers the original signal anyway.
+Simply removing sensitive attributes does not fully solve the problem because disparate impact arises whenever non-sensitive and sensitive attributes are correlated, as directly framed by Komiyama and Shimao.<sup><a href="#user-content-fn-7" id="user-content-fnref-7" data-footnote-ref="true" aria-describedby="footnote-label">7</a></sup></p>
+<p>The large number of learnable parameters of generative models amplifies these effects. The underlying risks, however, are not new. They have been extensively studied in traditional ML for years.</p>
+<h2 id="phase-3-deployment">Phase 3: Deployment</h2>
+<p>The deployment phase is where AI risk converges with classical IT and cyber risk.
+The questions that matter here will be familiar to any infrastructure or security team.</p>
+<p>Where is user input stored, and for how long?
+What retention policy applies, and is it enforced in practice?
+Are model updates triggered by user inputs
+(for example, through online fine-tuning or memory features that learn from prior conversations),
+and if so, are those inputs handled lawfully?
+Which third-party APIs are called during an inference, and what data crosses those boundaries?
+When these questions go unanswered, the consequences are: undeclared retention of personal data,
+unlawful reuse of data for purposes it was never collected for, and uncontrolled data transfers across organizational boundaries.</p>
+<p>These are not new categories of risk.
+They are the same categories that apply to any system handling sensitive data.
+What is new is the specific attack surface that AI-driven patterns create.
+Adaptive learning from production traffic blurs the line between operational data and training data, since user inputs can end up shaping the next version of the model.
+Integration with external model providers pushes parts of the inference pipeline outside the organization&#x27;s direct control, with sensitive data crossing boundaries that an in-house team cannot fully audit.
+The volume and sensitivity of the inputs and outputs flowing through these pipelines mean that small weaknesses in any link of the chain have outsized consequences.</p>
+<h2 id="phase-4-inference">Phase 4: Inference</h2>
+<p>The inference phase is where users interact with the deployed model. Risk is two-sided.
+Data flows in from users (or user systems, such as knowledge bases) in the form of prompts or queries.
+Data flows out in the form of model responses.
+The picture here differs meaningfully between non-generative models and large language models.</p>
+<p>For non-generative models, the output is bounded.
+A fraud classifier returns zero or one.
+A risk score returns a number in a fixed range.
+The information returned by the model is therefore limited, but a well-developed body of research has shown that bounded outputs still carry information about training data.
+Membership inference attacks determine whether a specific record was part of the training set.<sup><a href="#user-content-fn-8" id="user-content-fnref-8" data-footnote-ref="true" aria-describedby="footnote-label">8</a></sup>
+For a product recommender system, knowing whether a record was in the training data may not be of concern.
+For a model trained on cancer diagnoses, it is not a trivial matter, since it reveals sensitive health-related information.
+Attribute inference attacks reconstruct sensitive attributes from model behavior, allowing an adversary with partial knowledge of an individual to recover the rest.<sup><a href="#user-content-fn-9" id="user-content-fnref-9" data-footnote-ref="true" aria-describedby="footnote-label">9</a></sup></p>
+<p>For large language models, the output space is effectively unbounded.
+The model produces sequences of tokens drawn from a probability distribution over a large vocabulary.
+As a consequence, the same prompt does not always produce the same answer.
+This explains several phenomena that are sometimes treated as anomalies.
+Hallucinations are not bugs in this view: they are probable but factually incorrect sequences.<sup><a href="#user-content-fn-10" id="user-content-fnref-10" data-footnote-ref="true" aria-describedby="footnote-label">10</a></sup>
+The EDPB&#x27;s ChatGPT Taskforce report takes the same view from a regulatory angle, noting that the probabilistic nature of LLM output creates compliance obligations under the GDPR data accuracy principle that go beyond ordinary disclaimers.<sup><a href="#user-content-fn-11" id="user-content-fnref-11" data-footnote-ref="true" aria-describedby="footnote-label">11</a></sup>
+Harmful or biased outputs follow the same logic. The output space cannot be tightly constrained.</p>
+<p>Agentic systems extend this picture further.
+When models invoke tools, retrieve data autonomously, and chain actions across services,
+the data flows at inference time become harder to bound.
+The lifecycle phases still apply to the underlying model, but inference becomes a moving target.
+We will go deeper on agentic systems in a separate piece.</p>
+<p>Two classes of risk coexist in any organization operating large language models, whether standalone or alongside traditional ML systems: the traditional inference attacks discussed above, and the new risks that follow from unbounded probabilistic output. As the next section makes clear, integrating large language models exacerbates existing risks such as memorization, and at the same time introduces new ones.</p>
+<h2 id="what-actually-changes-with-generative-ai">What Actually Changes with Generative AI</h2>
+<p>What changes when an organization moves from traditional ML to generative AI follows from properties of the models themselves, not from the lifecycle structure.</p>
+<p>The first is scale. Modern large language models have orders of magnitude more parameters than traditional ML systems: enough to encode information we did not intend them to encode, in internal representations that are not directly observable. While this characteristic is common to all deep learning models,
+the capacity of language models to absorb and retain detail from training data is qualitatively different from previous generations.<sup><a href="#user-content-fn-12" id="user-content-fnref-12" data-footnote-ref="true" aria-describedby="footnote-label">12</a></sup></p>
+<p>The second is the nature of inference itself.
+A classifier has a small, discrete output space (a label or a score) that can be enumerated and tested.
+A language model returns a sequence of tokens drawn probabilistically from a vocabulary that is effectively unbounded.
+This is the source of many of the behaviors that make generative AI distinctive in production.
+The unpredictability of outputs. The difficulty of guaranteeing safety properties.
+The persistence of hallucination as a structural rather than incidental phenomenon.</p>
+<figure class="post-diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 460" width="100%" height="100%" style="display:block;min-width:700px"><style>
+        .fig2-phase-label { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px; fill: #4a5568; letter-spacing: 1px; text-transform: uppercase; }
+        .fig2-risks-label { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px; fill: #0D7377; letter-spacing: 1px; text-transform: uppercase; }
+        .fig2-header-text { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 24px; fill: #1a1a1a; text-anchor: middle; }
+        .fig2-list-text   { font-family: 'DM Sans', sans-serif; font-size: 15px; fill: #1a1a1a; text-anchor: start; }
+        .fig2-list-risk   { font-family: 'DM Sans', sans-serif; font-size: 15px; fill: #0D7377; text-anchor: start; }
+        .fig2-bg-panel    { fill: #eef2f5; stroke: #dce3e8; stroke-width: 1; }
+        .fig2-sep-teal    { stroke: #0D7377; stroke-width: 1.5; fill: none; }
+        .fig2-sep-gray    { stroke: #dce3e8; stroke-width: 1; }
+      </style><rect x="175" y="40" width="440" height="410" class="fig2-bg-panel"></rect><rect x="635" y="40" width="455" height="410" class="fig2-bg-panel"></rect><text x="395" y="74" class="fig2-header-text">Generative AI</text><text x="862" y="74" class="fig2-header-text">Non-generative AI</text><line x1="175" y1="90" x2="615" y2="90" class="fig2-sep-teal"></line><line x1="635" y1="90" x2="1090" y2="90" class="fig2-sep-teal"></line><line x1="175" y1="192" x2="615" y2="192" class="fig2-sep-gray"></line><line x1="635" y1="192" x2="1090" y2="192" class="fig2-sep-gray"></line><line x1="175" y1="354" x2="615" y2="354" class="fig2-sep-gray"></line><line x1="635" y1="354" x2="1090" y2="354" class="fig2-sep-gray"></line><text class="fig2-list-text"><tspan x="190" y="106">• Larger models capable of storing</tspan><tspan x="202" dy="19">more information than non-gen AI</tspan><tspan x="190" dy="23">• Ability to simultaneously learn</tspan><tspan x="202" dy="19">multiple aspects at once</tspan></text><text class="fig2-list-text"><tspan x="650" y="106">• Potentially learn more information</tspan><tspan x="662" dy="19">than intended, in particular by</tspan><tspan x="662" dy="19">failing to generalize well enough</tspan></text><text class="fig2-list-text"><tspan x="190" y="208">• Unpredictable output space</tspan><tspan x="210" dy="23">• Generation, even exact</tspan><tspan x="222" dy="19">reproduction of sensitive content</tspan><tspan x="210" dy="23">• Generation of inappropriate content</tspan><tspan x="190" dy="27">• Challenging to control the output</tspan></text><text class="fig2-list-text"><tspan x="650" y="208">• More subtle information leaks</tspan><tspan x="670" dy="23">• Membership inference: learning</tspan><tspan x="682" dy="19">that a specific record is part of</tspan><tspan x="682" dy="19">the training corpus</tspan><tspan x="670" dy="27">• Attribute inference: learning</tspan><tspan x="682" dy="19">the exact value of an attribute</tspan><tspan x="682" dy="19">for specific records</tspan></text><text class="fig2-list-risk"><tspan x="190" y="369">• Capability to reproduce the</tspan><tspan x="202" dy="19">“input space”, higher risks of</tspan><tspan x="202" dy="19">unintentional data leakage.</tspan><tspan x="190" dy="23">• New attacks.</tspan></text><text class="fig2-list-risk"><tspan x="650" y="369">• Subtle but notable privacy issues,</tspan><tspan x="662" dy="19">even though the output is more</tspan><tspan x="662" dy="19">constrained.</tspan><tspan x="650" dy="23">• More mature attacks.</tspan></text><text x="36" y="133" class="fig2-phase-label">Exploration &amp;</text><text x="36" y="151" class="fig2-phase-label">Training</text><text x="36" y="263" class="fig2-phase-label">Deployment &amp;</text><text x="36" y="281" class="fig2-phase-label">Inference</text><text x="36" y="393" class="fig2-risks-label">Privacy</text><text x="36" y="411" class="fig2-risks-label">Implications</text></svg><figcaption>Figure 2. Privacy risks compared across generative and non-generative AI, by lifecycle phase.</figcaption></figure>
+<p>These two properties together change what is possible at inference time.
+Large language models can reproduce training or fine-tuning data in their outputs, sometimes verbatim, often in contexts where the data was never meant to surface.
+A model fine-tuned on internal documents can return excerpts of those documents in response to an unrelated user query.
+A model trained on data containing personal information can emit that information when prompted in ways its developers did not anticipate.<sup><a href="#user-content-fn-13" id="user-content-fnref-13" data-footnote-ref="true" aria-describedby="footnote-label">13</a></sup>
+Memorized content can be elicited through natural language and returned as part of a normal response.
+The boundary between training data and output is more porous than it is in earlier machine learning systems.</p>
+<p>These are real new risks that coexist with previous ones.
+Membership inference, attribute inference, and disclosure through model outputs remain live concerns for any deployed model, generative or not.</p>
+<h2 id="implications-for-privacy-and-governance">Implications for Privacy and Governance</h2>
+<p>By dividing the AI lifecycle into four phases and characterizing privacy risks specific to each, three implications come into focus.</p>
+<p>Privacy risk attaches to phases of the lifecycle, not to &quot;AI&quot; in the abstract. A meaningful safeguard at the inference phase looks different from a meaningful safeguard at the training phase. Treating AI as a single risk category leads to controls that are either too broad to be useful or too narrow to be effective.</p>
+<p>The exploration phase is often the least governed and the most consequential for downstream compliance. Data lineage, lawful basis, and the boundaries of permitted use are established or undermined at this stage. Governance frameworks that focus only on production deployment miss the point at which most of the consequential decisions are made.</p>
+<p>Generative AI introduces real new risks at training and inference. It does not eliminate the established risks of traditional ML. Organizations deploying both need governance that covers both. A privacy program that has been redesigned around generative AI, and has in the process stopped paying attention to the older categories of risk, is exposed in ways that are easy to miss.</p>
+<p>The lifecycle framing is not a complete answer. It is the starting point of any rigorous AI privacy assessment. From there, the work is in the specifics. Which data. Which model. Which deployment context. Which safeguards are appropriate at each stage.</p>
+<section data-footnotes="true" class="footnotes"><h2 class="sr-only" id="footnote-label">Footnotes</h2>
+<ol>
+<li id="user-content-fn-1">
+<p>European Data Protection Board, Opinion 28/2024 on certain data protection aspects related to the processing of personal data in the context of AI models, 17 December 2024. <a href="https://www.edpb.europa.eu/system/files/2024-12/edpb_opinion_202428_ai-models_en.pdf">https://www.edpb.europa.eu/system/files/2024-12/edpb_opinion_202428_ai-models_en.pdf</a> <a href="#user-content-fnref-1" data-footnote-backref="" aria-label="Back to reference 1" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-2">
+<p>National Institute of Standards and Technology, Artificial Intelligence Risk Management Framework (AI RMF 1.0), January 2023, <a href="https://www.nist.gov/itl/ai-risk-management-framework">https://www.nist.gov/itl/ai-risk-management-framework</a> <a href="#user-content-fnref-2" data-footnote-backref="" aria-label="Back to reference 2" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-3">
+<p>National Institute of Standards and Technology, Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile, NIST AI 600-1, July 2024, <a href="https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf">https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf</a> <a href="#user-content-fnref-3" data-footnote-backref="" aria-label="Back to reference 3" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-4">
+<p>Salimi, B., Howe, B., and Suciu, D., &quot;Data Management for Causal Algorithmic Fairness,&quot; 2019, <a href="https://arxiv.org/abs/1908.07924">https://arxiv.org/abs/1908.07924</a> <a href="#user-content-fnref-4" data-footnote-backref="" aria-label="Back to reference 4" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-5">
+<p>Ceccon, M., Cornacchia, G., Dalle Pezze, D., Fabris, A., and Susto, G. A., &quot;Underrepresentation, Label Bias, and Proxies: Towards Data Bias Profiles for the EU AI Act and Beyond,&quot; Expert Systems with Applications, 2025, <a href="https://arxiv.org/abs/2507.08866">https://arxiv.org/abs/2507.08866</a> <a href="#user-content-fnref-5" data-footnote-backref="" aria-label="Back to reference 5" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-6">
+<p>Carlini, N., Tramèr, F., Wallace, E., Jagielski, M., Herbert-Voss, A., Lee, K., Roberts, A., Brown, T., Song, D., Erlingsson, Ú., Oprea, A., and Raffel, C., &quot;Extracting Training Data from Large Language Models,&quot; 30th USENIX Security Symposium, 2021, <a href="https://www.usenix.org/conference/usenixsecurity21/presentation/carlini-extracting">https://www.usenix.org/conference/usenixsecurity21/presentation/carlini-extracting</a> <a href="#user-content-fnref-6" data-footnote-backref="" aria-label="Back to reference 6" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-7">
+<p>Komiyama, J. and Shimao, H., &quot;Two-stage Algorithm for Fairness-aware Machine Learning,&quot; 2017, <a href="https://arxiv.org/abs/1710.04924">https://arxiv.org/abs/1710.04924</a> <a href="#user-content-fnref-7" data-footnote-backref="" aria-label="Back to reference 7" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-8">
+<p>Shokri, R., Stronati, M., Song, C., and Shmatikov, V., &quot;Membership Inference Attacks Against Machine Learning Models,&quot; 2017 IEEE Symposium on Security and Privacy, <a href="https://arxiv.org/abs/1610.05820">https://arxiv.org/abs/1610.05820</a> <a href="#user-content-fnref-8" data-footnote-backref="" aria-label="Back to reference 8" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-9">
+<p>Fredrikson, M., Jha, S., and Ristenpart, T., &quot;Model Inversion Attacks that Exploit Confidence Information and Basic Countermeasures,&quot; Proceedings of the 22nd ACM SIGSAC Conference on Computer and Communications Security, 2015, <a href="https://dl.acm.org/doi/10.1145/2810103.2813677">https://dl.acm.org/doi/10.1145/2810103.2813677</a> <a href="#user-content-fnref-9" data-footnote-backref="" aria-label="Back to reference 9" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-10">
+<p>Huang, L., Yu, W., Ma, W., Zhong, W., Feng, Z., Wang, H., Chen, Q., Peng, W., Feng, X., Qin, B., and Liu, T., &quot;A Survey on Hallucination in Large Language Models: Principles, Taxonomy, Challenges, and Open Questions,&quot; 2023, <a href="https://arxiv.org/abs/2311.05232">https://arxiv.org/abs/2311.05232</a> <a href="#user-content-fnref-10" data-footnote-backref="" aria-label="Back to reference 10" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-11">
+<p>European Data Protection Board, Report of the Work Undertaken by the ChatGPT Taskforce, 23 May 2024, <a href="https://www.edpb.europa.eu/our-work-tools/our-documents/other/report-work-undertaken-chatgpt-taskforce_en">https://www.edpb.europa.eu/our-work-tools/our-documents/other/report-work-undertaken-chatgpt-taskforce_en</a> <a href="#user-content-fnref-11" data-footnote-backref="" aria-label="Back to reference 11" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-12">
+<p>Carlini, N., Ippolito, D., Jagielski, M., Lee, K., Tramèr, F., and Zhang, C., &quot;Quantifying Memorization Across Neural Language Models,&quot; International Conference on Learning Representations (ICLR), 2023, <a href="https://arxiv.org/abs/2202.07646">https://arxiv.org/abs/2202.07646</a> <a href="#user-content-fnref-12" data-footnote-backref="" aria-label="Back to reference 12" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-13">
+<p>Chen, X., Tang, J., Li, Y., Pan, X., Yan, M., and Yang, M., &quot;The Janus Interface: How Fine-Tuning in Large Language Models Amplifies the Privacy Risks,&quot; 2023, <a href="https://arxiv.org/abs/2310.15469">https://arxiv.org/abs/2310.15469</a> <a href="#user-content-fnref-13" data-footnote-backref="" aria-label="Back to reference 13" class="data-footnote-backref">↩</a></p>
+</li>
+</ol>
+</section></article></div><div class="post-back"><a href="/writing/">← All writing</a></div></main><footer class="footer"><div class="footer-text">Modal Resonance · AI Advisory · Berlin, Germany</div><a href="/writing/feed.xml" class="footer-text" style="color:inherit;text-decoration:none">RSS</a></footer></div></div>
+</body>
+</html>

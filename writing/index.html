@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#F7F9FA" />
+
+  <title>Writing | Modal Resonance</title>
+  <meta name="description" content="Technical perspectives on AI systems, privacy, and evaluation from the Modal Resonance team." />
+
+  <link rel="canonical" href="https://modalresonance.com/writing/" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+
+  <link rel="alternate" type="application/rss+xml" title="Modal Resonance Writing" href="https://modalresonance.com/writing/feed.xml" />
+
+  <!-- OpenGraph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Modal Resonance" />
+  <meta property="og:title" content="Writing | Modal Resonance" />
+  <meta property="og:description" content="Technical perspectives on AI systems, privacy, and evaluation from the Modal Resonance team." />
+  <meta property="og:url" content="https://modalresonance.com/writing/" />
+  <meta property="og:image" content="https://modalresonance.com/assets/img/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Writing | Modal Resonance" />
+  <meta name="twitter:description" content="Technical perspectives on AI systems, privacy, and evaluation from the Modal Resonance team." />
+  <meta name="twitter:image" content="https://modalresonance.com/assets/img/og-image.svg" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Blog",
+      "@id": "https://modalresonance.com/writing/#blog",
+      "name": "Modal Resonance Writing",
+      "url": "https://modalresonance.com/writing/",
+      "description": "Technical perspectives on AI systems, privacy, and evaluation from the Modal Resonance team.",
+      "publisher": {
+        "@id": "https://modalresonance.com/#org"
+      },
+      "inLanguage": "en"
+    }
+  ]
+}
+  </script>
+
+  <script defer data-domain="modalresonance.com" src="https://plausible.io/js/script.js"></script>
+
+  <style>body { margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <div id="root"><div style="background:#F7F9FA;color:#1a1a1a;min-height:100vh"><style>
+    
+  /* DM Sans - latin-ext */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-italic-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* DM Sans - latin */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-italic-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* DM Sans - latin-ext */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-normal-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* DM Sans - latin */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-normal-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* Instrument Serif - latin-ext */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-italic-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* Instrument Serif - latin */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-italic-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* Instrument Serif - latin-ext */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-normal-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* Instrument Serif - latin */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-normal-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --text: #1a1a1a;
+--text-secondary: #4a5568;
+--bg: #F7F9FA;
+--bg-dark: #0B1726;
+--accent: #0D7377;
+--accent-light: #14919B;
+--border: #dce3e8;
+    }
+
+    .theme-switcher {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      display: none; gap: 8px; padding: 10px 14px;
+      background: rgba(0,0,0,0.85); border-radius: 8px;
+      backdrop-filter: blur(12px);
+    }
+    .theme-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid transparent; cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .theme-btn:hover { transform: scale(1.15); }
+    .theme-btn.active { border-color: #fff; }
+    .theme-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      color: #999; letter-spacing: 0.5px;
+      display: flex; align-items: center; margin-right: 6px;
+    }
+
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 48px;
+      background: rgba(247, 249, 250, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 22px; font-weight: 400; color: var(--text);
+      letter-spacing: 0.3px; cursor: pointer;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-link {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: var(--text-secondary); text-decoration: none;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      cursor: pointer; border: none; background: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-cta {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 10px 24px; background: var(--text);
+      color: var(--bg); border: none; cursor: pointer;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      transition: background 0.25s;
+    }
+    .nav-cta:hover { background: var(--accent); }
+
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; padding: 140px 48px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -200px; right: -200px;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(13, 115, 119, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 32px;
+    }
+    .hero-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(42px, 6vw, 72px); line-height: 1.08;
+      font-weight: 400; max-width: 800px;
+      margin-bottom: 32px;
+    }
+    .hero-sub {
+      font-family: 'DM Sans', sans-serif; font-size: 18px;
+      line-height: 1.7; color: var(--text-secondary);
+      max-width: 560px; font-weight: 300;
+    }
+    .hero-scroll {
+      margin-top: 80px; display: flex; align-items: center; gap: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); cursor: pointer;
+      border: none; background: none;
+    }
+    .hero-scroll:hover { color: var(--accent); }
+    .scroll-line {
+      width: 48px; height: 1px; background: var(--accent);
+      transition: width 0.3s;
+    }
+    .hero-scroll:hover .scroll-line { width: 64px; }
+
+    .section { padding: 120px 48px; }
+    .section-dark { background: var(--bg-dark); color: #e8e6e1; }
+    .section-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(32px, 4vw, 48px); line-height: 1.15;
+      font-weight: 400; margin-bottom: 20px; margin-left: -0.04em;
+    }
+    .section-subtitle {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.7; color: var(--text-secondary);
+      max-width: 900px; font-weight: 300;
+    }
+    .section-dark .section-subtitle { color: #999; }
+    .section-dark .section-label { color: var(--accent-light); }
+
+    .problems-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; margin-top: 64px;
+    }
+    .problems-grid > div { height: 100%; }
+    .problem-card {
+      /* background: #fff; */
+      background: transparent;
+      padding: 48px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: all 0.35s ease; position: relative;
+      overflow: hidden;
+      height: 100%;
+    }
+    .problem-card:hover { border-color: transparent; box-shadow: 0 8px 40px rgba(0,0,0,0.06); }
+    .problem-tag {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 20px; font-weight: 500;
+      color: var(--card-color);
+    }
+    .problem-title {
+      font-family: 'Instrument Serif', serif; font-size: 24px;
+      line-height: 1.25; margin-bottom: 16px; letter-spacing: 0.3px;
+    }
+    .problem-desc {
+      font-family: 'DM Sans', sans-serif; font-size: 16x;
+      line-height: 1.7; color: var(--text-secondary); font-weight: 300;
+    }
+    .problem-expand {
+      margin-top: 24px; overflow: hidden;
+      transition: max-height 0.5s ease, opacity 0.4s ease;
+    }
+    .problem-expand-inner { padding-top: 24px; border-top: 1px solid var(--border); }
+    .signal-item {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.6; color: var(--text-secondary);
+      padding: 6px 0 6px 20px; position: relative; font-weight: 300;
+    }
+    .signal-item::before {
+      content: '→'; position: absolute; left: 0; color: var(--accent);
+    }
+    .problem-approach {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.7; color: var(--text); margin-top: 20px;
+      font-weight: 400; font-style: italic;
+    }
+
+    .problem-indicators-label {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #999; margin-bottom: 12px;
+    }
+
+    .problem-card-solid { color: #F6F3EF; border-color: transparent; }
+    .problem-card-solid .problem-tag { color: rgba(246, 243, 239, 0.99); }
+    .problem-card-solid .problem-desc,
+    .problem-card-solid .signal-item { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .signal-item::before { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-approach { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-indicators-label { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-expand-inner { border-top-color: rgba(255,255,255,0.15); }
+    .problem-card-solid:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.15); border-color: transparent; }
+
+
+    .approach-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 64px; margin-top: 80px;
+    }
+    .approach-number {
+      font-family: 'Instrument Serif', serif; font-size: 48px;
+      color: #0D7377; margin-bottom: 20px;
+    }
+    .approach-name {
+      font-family: 'Instrument Serif', serif; font-size: 22px;
+      margin-bottom: 12px; color: #e8e6e1;
+    }
+    .approach-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.75; color: #888; font-weight: 300;
+    }
+
+    .background-section { margin-top: 64px; max-width: 720px; }
+    .background-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.85; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .team-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; margin-top: 34px;
+    }
+    .team-intro {
+      grid-column: 1 / -1; max-width: 680px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+      margin-bottom: 16px;
+    }
+    .team-member {}
+    .team-photo {
+      width: 80px; height: 80px;
+      background-size: cover; background-position: center 20%;
+      filter: grayscale(100%) contrast(1.1);
+    }
+    .team-member:has(.team-photo) {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      column-gap: 24px;
+      margin-top: 40px;
+    }
+    .team-member:has(.team-photo) .team-role {
+      grid-column: 2; grid-row: 1;
+      margin-top: 0;
+    }
+    .team-member:has(.team-photo) .team-photo {
+      grid-column: 1; grid-row: 2 / 4;
+      width: 100%; height: 120px;
+    }
+    .team-member:has(.team-photo) .team-name {
+      grid-column: 2; grid-row: 2;
+      margin-bottom: 10px;
+    }
+    .team-member:has(.team-photo) .team-bio {
+      grid-column: 2; grid-row: 3;
+      margin-bottom: 0;
+    }
+    .team-role {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+      margin-top: 40px;
+    }
+    .team-name {
+      font-family: 'Instrument Serif', serif; font-size: 28px;
+      margin-bottom: 16px; letter-spacing: 0.3px;
+    }
+    .team-bio {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+      margin-bottom: 20px;
+    }
+    .team-member a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transition: color 0.2s, text-decoration-color 0.2s;
+    }
+    .team-member a:hover {
+      color: var(--accent);
+    }
+    .team-name a {
+      text-underline-offset: 5px;
+    }
+
+
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; margin-top: 64px;
+    }
+    .contact-text {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+    .contact-email {
+      font-family: 'Instrument Serif', serif; font-size: 28px;
+      color: var(--accent); text-decoration: none; display: block;
+      margin-top: 32px; transition: opacity 0.2s;
+    }
+    .contact-email:hover { opacity: 0.7; }
+    .form-group { margin-bottom: 24px; }
+    .form-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); display: block; margin-bottom: 8px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 14px 0; border: none;
+      border-bottom: 1px solid var(--border);
+      background: transparent; font-family: 'DM Sans', sans-serif;
+      font-size: 15px; color: var(--text); outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-textarea { resize: vertical; min-height: 100px; }
+    .form-select { cursor: pointer; appearance: none; }
+    .form-submit {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 16px 48px; background: var(--text);
+      color: var(--bg); border: none; cursor: pointer;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 8px;
+    }
+    .form-submit:hover { background: var(--accent); }
+    .contact-book-btn {
+      display: inline-block; text-decoration: none;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 18px 48px; background: var(--text);
+      color: var(--bg); cursor: pointer;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 32px;
+    }
+    .contact-book-btn:hover { background: var(--accent); }
+    .contact-form-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); margin-bottom: 28px;
+    }
+
+    .footer {
+      padding: 40px 48px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-text {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: #999; letter-spacing: 0.5px;
+    }
+    .footer-location {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: #999; letter-spacing: 0.5px;
+    }
+
+    .capabilities-list { margin-top: 64px; }
+    .capability-item {
+      display: grid; grid-template-columns: 1fr 2fr;
+      gap: 40px; padding: 36px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .capability-item:first-child { border-top: 1px solid var(--border); }
+    .capability-name {
+      font-family: 'Instrument Serif', serif; font-size: 20px;
+      line-height: 1.3; letter-spacing: 0.3px;
+    }
+    .capability-desc {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .steps-list { margin-top: 64px; }
+    .step-item {
+      display: grid; grid-template-columns: 72px 1fr;
+      gap: 32px; padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-item:first-child { border-top: 1px solid var(--border); }
+    .step-number {
+      font-family: 'Instrument Serif', serif; font-size: 40px;
+      color: var(--accent); opacity: 0.35; line-height: 1;
+      padding-top: 4px;
+    }
+    .step-title {
+      font-family: 'Instrument Serif', serif; font-size: 22px;
+      margin-bottom: 10px; letter-spacing: 0.3px;
+    }
+    .step-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .use-cases-list { margin-top: 48px; }
+    .use-case-item {
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      line-height: 1.7; color: var(--text-secondary);
+      padding: 10px 0 10px 24px; position: relative; font-weight: 300;
+      border-bottom: 1px solid var(--border);
+    }
+    .use-case-item:first-child { border-top: 1px solid var(--border); }
+    .use-case-item::before {
+      content: '→'; position: absolute; left: 0; color: var(--accent);
+    }
+
+    .page-cta {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 16px 48px; background: var(--text);
+      color: var(--bg); text-decoration: none;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 40px;
+    }
+    .page-cta:hover { background: var(--accent); }
+
+    .creds-strip {
+      display: flex;
+      gap: 32px 48px;
+      align-items: flex-start;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .creds-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted, #888);
+      flex: 0 0 auto;
+      white-space: nowrap;
+      align-self: center;
+    }
+    .creds-items {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px 32px;
+    }
+    .cred-item {
+      flex: 1 1 calc(33.33% - 22px);
+      min-width: 120px;
+      text-decoration: none;
+      color: inherit;
+    }
+    @media (min-width: 1280px) {
+      .cred-item { flex: 1 1 calc(20% - 26px); }
+    }
+    @media (max-width: 680px) {
+      .creds-strip { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 768px) {
+      .nav { padding: 16px 24px; }
+      .nav-links { gap: 16px; }
+      .nav-link { display: none; }
+      .hero { padding: 120px 24px 60px; }
+      .section { padding: 80px 24px; }
+      .problems-grid { grid-template-columns: 1fr; }
+      .approach-grid { grid-template-columns: 1fr; gap: 40px; }
+      .team-grid { grid-template-columns: 1fr; gap: 48px; }
+      .team-member:has(.team-photo) { display: block; }
+      .team-member:has(.team-photo) .team-photo { width: 80px; height: 80px; margin-bottom: 10px; }
+      .team-member:has(.team-photo) .team-role { margin-top: 0; }
+      .team-member:has(.team-photo) .team-name { margin-bottom: 10px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .theme-switcher { bottom: 12px; right: 12px; }
+      .capability-item { grid-template-columns: 1fr; gap: 12px; }
+      .step-item { grid-template-columns: 48px 1fr; gap: 20px; }
+      .step-number { font-size: 28px; }
+    }
+  </style><style>
+  a.nav-cta { text-decoration: none; }
+
+  .writing-index {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 48px 80px;
+  }
+
+  .writing-rss {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    margin-top: 16px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .writing-rss:hover { border-color: var(--accent); color: var(--accent); }
+
+  .writing-list {
+    margin-top: 64px;
+    border-top: 1px solid var(--border);
+  }
+
+  .writing-card {
+    padding: 40px 0;
+    border-bottom: 1px solid var(--border);
+    max-width: 720px;
+  }
+
+  .writing-card-meta {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .writing-card-meta-sep { color: var(--border); }
+
+  .writing-card-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .writing-card-title a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .writing-card-title a:hover { color: var(--accent); }
+
+  .writing-card-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 16px;
+  }
+
+  .writing-card-authors {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+
+  .writing-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .post-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+  }
+
+  @media (max-width: 768px) {
+    .writing-index { padding: 100px 24px 60px; }
+  }
+</style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit">Modal Resonance</a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Book an intro call</a></div></nav><div class="writing-index"><div class="section-label">From the team</div><h1 class="section-title">Writing</h1><p class="section-subtitle">Technical perspectives on AI systems, privacy, and evaluation from the Modal Resonance team.</p><a href="/writing/feed.xml" class="writing-rss">RSS Feed</a><div class="writing-list"><article class="writing-card"><div class="writing-card-meta"><time dateTime="2026-05-05">May 5, 2026</time><span class="writing-card-meta-sep">·</span><span>12<!-- --> min read</span></div><div class="writing-card-title"><a href="/writing/ai-lifecycle-risks/">Mapping Privacy Risk Across the AI Lifecycle</a></div><p class="writing-card-desc">A structured breakdown of where privacy risk lives across the four phases of the AI lifecycle, and what genuinely changes with generative AI versus traditional ML.</p><div class="writing-card-authors">Omar Ali Fdal, Matteo Giomi</div><div class="writing-card-tags"><span class="post-tag">AI risk</span><span class="post-tag">privacy</span><span class="post-tag">AI governance</span><span class="post-tag">GDPR</span><span class="post-tag">generative AI</span></div></article></div></div><footer class="footer"><div class="footer-text">Modal Resonance · AI Advisory · Berlin, Germany</div><a href="/writing/feed.xml" class="footer-text" style="color:inherit;text-decoration:none">RSS</a></footer></div></div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Modal Resonance Writing</title>
+    <link>https://modalresonance.com/writing/</link>
+    <description>Technical perspectives on AI systems, privacy, and evaluation from the Modal Resonance team.</description>
+    <language>en</language>
+    <atom:link href="https://modalresonance.com/writing/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Mapping Privacy Risk Across the AI Lifecycle</title>
+      <link>https://modalresonance.com/writing/ai-lifecycle-risks/</link>
+      <description><![CDATA[A structured breakdown of where privacy risk lives across the four phases of the AI lifecycle, and what genuinely changes with generative AI versus traditional ML.]]></description>
+      <pubDate>Tue, 05 May 2026 00:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://modalresonance.com/writing/ai-lifecycle-risks/</guid>
+      <author>Omar Ali Fdal, Matteo Giomi</author>
+    </item>
+  </channel>
+</rss>
