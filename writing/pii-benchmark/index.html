@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#F7F9FA" />
+
+  <title>Benchmarking Open-Source PII Detectors | Modal Resonance</title>
+  <meta name="description" content="We benchmarked three open-source PII detectors (Microsoft Presidio, GLiNER, and OpenAI's Privacy Filter) on detection accuracy and throughput across two datasets and six entity types. OPF leads out-of-the-box on a GPU, Presidio wins on CPU and pattern-rich entities, GLiNER is the most flexible to configure." />
+
+  <link rel="canonical" href="https://modalresonance.com/writing/pii-benchmark/" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+
+  <link rel="alternate" type="application/rss+xml" title="Modal Resonance Writing" href="https://modalresonance.com/writing/feed.xml" />
+
+  <!-- OpenGraph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Modal Resonance" />
+  <meta property="og:title" content="Benchmarking Open-Source PII Detectors | Modal Resonance" />
+  <meta property="og:description" content="We benchmarked three open-source PII detectors (Microsoft Presidio, GLiNER, and OpenAI's Privacy Filter) on detection accuracy and throughput across two datasets and six entity types. OPF leads out-of-the-box on a GPU, Presidio wins on CPU and pattern-rich entities, GLiNER is the most flexible to configure." />
+  <meta property="og:url" content="https://modalresonance.com/writing/pii-benchmark/" />
+  <meta property="og:image" content="https://modalresonance.com/assets/img/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Benchmarking Open-Source PII Detectors | Modal Resonance" />
+  <meta name="twitter:description" content="We benchmarked three open-source PII detectors (Microsoft Presidio, GLiNER, and OpenAI's Privacy Filter) on detection accuracy and throughput across two datasets and six entity types. OPF leads out-of-the-box on a GPU, Presidio wins on CPU and pattern-rich entities, GLiNER is the most flexible to configure." />
+  <meta name="twitter:image" content="https://modalresonance.com/assets/img/og-image.svg" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://modalresonance.com/writing/pii-benchmark/#article",
+      "headline": "Benchmarking Open-Source PII Detectors",
+      "description": "We benchmarked three open-source PII detectors (Microsoft Presidio, GLiNER, and OpenAI's Privacy Filter) on detection accuracy and throughput across two datasets and six entity types. OPF leads out-of-the-box on a GPU, Presidio wins on CPU and pattern-rich entities, GLiNER is the most flexible to configure.",
+      "url": "https://modalresonance.com/writing/pii-benchmark/",
+      "datePublished": "2026-05-19",
+      "author": [
+        {
+          "@type": "Person",
+          "name": "Matteo Giomi"
+        },
+        {
+          "@type": "Person",
+          "name": "Omar Ali Fdal"
+        }
+      ],
+      "publisher": {
+        "@id": "https://modalresonance.com/#org"
+      },
+      "image": "https://modalresonance.com/assets/img/og-image.svg",
+      "keywords": [
+        "PII detection",
+        "benchmarks",
+        "privacy",
+        "NLP",
+        "open source"
+      ],
+      "isPartOf": {
+        "@type": "Blog",
+        "@id": "https://modalresonance.com/writing/#blog"
+      },
+      "inLanguage": "en"
+    }
+  ]
+}
+  </script>
+
+  <script defer data-domain="modalresonance.com" src="https://plausible.io/js/script.js"></script>
+
+  <style>body { margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <div id="root"><div style="background:#F7F9FA;color:#1a1a1a;min-height:100vh"><style>
+    
+  /* DM Sans - latin-ext */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-italic-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* DM Sans - latin */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-italic-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* DM Sans - latin-ext */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-normal-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* DM Sans - latin */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(/assets/fonts/dm-sans-normal-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* Instrument Serif - latin-ext */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-italic-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* Instrument Serif - latin */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-italic-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* Instrument Serif - latin-ext */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-normal-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* Instrument Serif - latin */
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/instrument-serif-normal-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --text: #1a1a1a;
+--text-secondary: #4a5568;
+--bg: #F7F9FA;
+--bg-dark: #0B1726;
+--accent: #0D7377;
+--accent-light: #14919B;
+--border: #dce3e8;
+    }
+
+    .theme-switcher {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      display: none; gap: 8px; padding: 10px 14px;
+      background: rgba(0,0,0,0.85); border-radius: 8px;
+      backdrop-filter: blur(12px);
+    }
+    .theme-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid transparent; cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .theme-btn:hover { transform: scale(1.15); }
+    .theme-btn.active { border-color: #fff; }
+    .theme-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      color: #999; letter-spacing: 0.5px;
+      display: flex; align-items: center; margin-right: 6px;
+    }
+
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 48px;
+      background: rgba(247, 249, 250, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 22px; font-weight: 400; color: var(--text);
+      letter-spacing: 0.3px; cursor: pointer;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-link {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: var(--text-secondary); text-decoration: none;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      cursor: pointer; border: none; background: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-cta {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 10px 24px; background: var(--text);
+      color: var(--bg); border: none; cursor: pointer;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      transition: background 0.25s;
+    }
+    .nav-cta:hover { background: var(--accent); }
+
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; padding: 140px 48px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -200px; right: -200px;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(13, 115, 119, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 32px;
+    }
+    .hero-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(42px, 6vw, 72px); line-height: 1.08;
+      font-weight: 400; max-width: 800px;
+      margin-bottom: 32px;
+    }
+    .hero-sub {
+      font-family: 'DM Sans', sans-serif; font-size: 18px;
+      line-height: 1.7; color: var(--text-secondary);
+      max-width: 560px; font-weight: 300;
+    }
+    .hero-scroll {
+      margin-top: 80px; display: flex; align-items: center; gap: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); cursor: pointer;
+      border: none; background: none;
+    }
+    .hero-scroll:hover { color: var(--accent); }
+    .scroll-line {
+      width: 48px; height: 1px; background: var(--accent);
+      transition: width 0.3s;
+    }
+    .hero-scroll:hover .scroll-line { width: 64px; }
+
+    .section { padding: 120px 48px; }
+    .section-dark { background: var(--bg-dark); color: #e8e6e1; }
+    .section-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(32px, 4vw, 48px); line-height: 1.15;
+      font-weight: 400; margin-bottom: 20px; margin-left: -0.04em;
+    }
+    .section-subtitle {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.7; color: var(--text-secondary);
+      max-width: 900px; font-weight: 300;
+    }
+    .section-dark .section-subtitle { color: #999; }
+    .section-dark .section-label { color: var(--accent-light); }
+
+    .problems-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; margin-top: 64px;
+    }
+    .problems-grid > div { height: 100%; }
+    .problem-card {
+      /* background: #fff; */
+      background: transparent;
+      padding: 48px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: all 0.35s ease; position: relative;
+      overflow: hidden;
+      height: 100%;
+    }
+    .problem-card:hover { border-color: transparent; box-shadow: 0 8px 40px rgba(0,0,0,0.06); }
+    .problem-tag {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 20px; font-weight: 500;
+      color: var(--card-color);
+    }
+    .problem-title {
+      font-family: 'Instrument Serif', serif; font-size: 24px;
+      line-height: 1.25; margin-bottom: 16px; letter-spacing: 0.3px;
+    }
+    .problem-desc {
+      font-family: 'DM Sans', sans-serif; font-size: 16x;
+      line-height: 1.7; color: var(--text-secondary); font-weight: 300;
+    }
+    .problem-expand {
+      margin-top: 24px; overflow: hidden;
+      transition: max-height 0.5s ease, opacity 0.4s ease;
+    }
+    .problem-expand-inner { padding-top: 24px; border-top: 1px solid var(--border); }
+    .signal-item {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.6; color: var(--text-secondary);
+      padding: 6px 0 6px 20px; position: relative; font-weight: 300;
+    }
+    .signal-item::before {
+      content: '→'; position: absolute; left: 0; color: var(--accent);
+    }
+    .problem-approach {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.7; color: var(--text); margin-top: 20px;
+      font-weight: 400; font-style: italic;
+    }
+
+    .problem-indicators-label {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #999; margin-bottom: 12px;
+    }
+
+    .problem-card-solid { color: #F6F3EF; border-color: transparent; }
+    .problem-card-solid .problem-tag { color: rgba(246, 243, 239, 0.99); }
+    .problem-card-solid .problem-desc,
+    .problem-card-solid .signal-item { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .signal-item::before { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-approach { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-indicators-label { color: rgba(246, 243, 239, 0.95); }
+    .problem-card-solid .problem-expand-inner { border-top-color: rgba(255,255,255,0.15); }
+    .problem-card-solid:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.15); border-color: transparent; }
+
+
+    .approach-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 64px; margin-top: 80px;
+    }
+    .approach-number {
+      font-family: 'Instrument Serif', serif; font-size: 48px;
+      color: #0D7377; margin-bottom: 20px;
+    }
+    .approach-name {
+      font-family: 'Instrument Serif', serif; font-size: 22px;
+      margin-bottom: 12px; color: #e8e6e1;
+    }
+    .approach-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.75; color: #888; font-weight: 300;
+    }
+
+    .background-section { margin-top: 64px; max-width: 720px; }
+    .background-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.85; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .team-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; margin-top: 34px;
+    }
+    .team-intro {
+      grid-column: 1 / -1; max-width: 680px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+      margin-bottom: 16px;
+    }
+    .team-member {}
+    .team-photo {
+      width: 80px; height: 80px;
+      background-size: cover; background-position: center 20%;
+      filter: grayscale(100%) contrast(1.1);
+    }
+    .team-member:has(.team-photo) {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      column-gap: 24px;
+      margin-top: 40px;
+    }
+    .team-member:has(.team-photo) .team-role {
+      grid-column: 2; grid-row: 1;
+      margin-top: 0;
+    }
+    .team-member:has(.team-photo) .team-photo {
+      grid-column: 1; grid-row: 2 / 4;
+      width: 100%; height: 120px;
+    }
+    .team-member:has(.team-photo) .team-name {
+      grid-column: 2; grid-row: 2;
+      margin-bottom: 10px;
+    }
+    .team-member:has(.team-photo) .team-bio {
+      grid-column: 2; grid-row: 3;
+      margin-bottom: 0;
+    }
+    .team-role {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+      margin-top: 40px;
+    }
+    .team-name {
+      font-family: 'Instrument Serif', serif; font-size: 28px;
+      margin-bottom: 16px; letter-spacing: 0.3px;
+    }
+    .team-bio {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+      margin-bottom: 20px;
+    }
+    .team-member a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transition: color 0.2s, text-decoration-color 0.2s;
+    }
+    .team-member a:hover {
+      color: var(--accent);
+    }
+    .team-name a {
+      text-underline-offset: 5px;
+    }
+
+
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; margin-top: 64px;
+    }
+    .contact-text {
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+    .contact-email {
+      font-family: 'Instrument Serif', serif; font-size: 28px;
+      color: var(--accent); text-decoration: none; display: block;
+      margin-top: 32px; transition: opacity 0.2s;
+    }
+    .contact-email:hover { opacity: 0.7; }
+    .form-group { margin-bottom: 24px; }
+    .form-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); display: block; margin-bottom: 8px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 14px 0; border: none;
+      border-bottom: 1px solid var(--border);
+      background: transparent; font-family: 'DM Sans', sans-serif;
+      font-size: 15px; color: var(--text); outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-textarea { resize: vertical; min-height: 100px; }
+    .form-select { cursor: pointer; appearance: none; }
+    .form-submit {
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 16px 48px; background: var(--text);
+      color: var(--bg); border: none; cursor: pointer;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 8px;
+    }
+    .form-submit:hover { background: var(--accent); }
+    .contact-book-btn {
+      display: inline-block; text-decoration: none;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 18px 48px; background: var(--text);
+      color: var(--bg); cursor: pointer;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 32px;
+    }
+    .contact-book-btn:hover { background: var(--accent); }
+    .contact-form-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); margin-bottom: 28px;
+    }
+
+    .footer {
+      padding: 40px 48px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-text {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: #999; letter-spacing: 0.5px;
+    }
+    .footer-location {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: #999; letter-spacing: 0.5px;
+    }
+
+    .capabilities-list { margin-top: 64px; }
+    .capability-item {
+      display: grid; grid-template-columns: 1fr 2fr;
+      gap: 40px; padding: 36px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .capability-item:first-child { border-top: 1px solid var(--border); }
+    .capability-name {
+      font-family: 'Instrument Serif', serif; font-size: 20px;
+      line-height: 1.3; letter-spacing: 0.3px;
+    }
+    .capability-desc {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .steps-list { margin-top: 64px; }
+    .step-item {
+      display: grid; grid-template-columns: 72px 1fr;
+      gap: 32px; padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-item:first-child { border-top: 1px solid var(--border); }
+    .step-number {
+      font-family: 'Instrument Serif', serif; font-size: 40px;
+      color: var(--accent); opacity: 0.35; line-height: 1;
+      padding-top: 4px;
+    }
+    .step-title {
+      font-family: 'Instrument Serif', serif; font-size: 22px;
+      margin-bottom: 10px; letter-spacing: 0.3px;
+    }
+    .step-text {
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.8; color: var(--text-secondary); font-weight: 300;
+    }
+
+    .use-cases-list { margin-top: 48px; }
+    .use-case-item {
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      line-height: 1.7; color: var(--text-secondary);
+      padding: 10px 0 10px 24px; position: relative; font-weight: 300;
+      border-bottom: 1px solid var(--border);
+    }
+    .use-case-item:first-child { border-top: 1px solid var(--border); }
+    .use-case-item::before {
+      content: '→'; position: absolute; left: 0; color: var(--accent);
+    }
+
+    .page-cta {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 16px 48px; background: var(--text);
+      color: var(--bg); text-decoration: none;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.25s; margin-top: 40px;
+    }
+    .page-cta:hover { background: var(--accent); }
+
+    .creds-strip {
+      display: flex;
+      gap: 32px 48px;
+      align-items: flex-start;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .creds-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted, #888);
+      flex: 0 0 auto;
+      white-space: nowrap;
+      align-self: center;
+    }
+    .creds-items {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px 32px;
+    }
+    .cred-item {
+      flex: 1 1 calc(33.33% - 22px);
+      min-width: 120px;
+      text-decoration: none;
+      color: inherit;
+    }
+    @media (min-width: 1280px) {
+      .cred-item { flex: 1 1 calc(20% - 26px); }
+    }
+    @media (max-width: 680px) {
+      .creds-strip { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 768px) {
+      .nav { padding: 16px 24px; }
+      .nav-links { gap: 16px; }
+      .nav-link { display: none; }
+      .hero { padding: 120px 24px 60px; }
+      .section { padding: 80px 24px; }
+      .problems-grid { grid-template-columns: 1fr; }
+      .approach-grid { grid-template-columns: 1fr; gap: 40px; }
+      .team-grid { grid-template-columns: 1fr; gap: 48px; }
+      .team-member:has(.team-photo) { display: block; }
+      .team-member:has(.team-photo) .team-photo { width: 80px; height: 80px; margin-bottom: 10px; }
+      .team-member:has(.team-photo) .team-role { margin-top: 0; }
+      .team-member:has(.team-photo) .team-name { margin-bottom: 10px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .theme-switcher { bottom: 12px; right: 12px; }
+      .capability-item { grid-template-columns: 1fr; gap: 12px; }
+      .step-item { grid-template-columns: 48px 1fr; gap: 20px; }
+      .step-number { font-size: 28px; }
+    }
+  </style><style>
+  a.nav-cta { text-decoration: none; }
+
+  .post-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 48px 80px;
+  }
+
+  .post-header {
+    max-width: 720px;
+    margin-bottom: 48px;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .post-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+  }
+
+  .post-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.1;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+  }
+
+  .post-meta {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .post-meta-sep { color: var(--border); }
+
+  .post-meta a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .post-meta a:hover { color: var(--accent); }
+
+  /* Layout: single column normally, sidebar when TOC is active */
+  .post-body-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .post-body-wrap.has-toc {
+    grid-template-columns: 200px 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .post-toc {
+    position: sticky;
+    top: 100px;
+  }
+
+  .post-toc-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .post-toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .post-toc-item {
+    margin-bottom: 8px;
+  }
+
+  .post-toc-item a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    line-height: 1.4;
+    display: block;
+  }
+
+  .post-toc-item a:hover { color: var(--accent); }
+  .post-toc-h3 { padding-left: 12px; }
+
+  /* Article body */
+  .post-content {
+    max-width: 720px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  .post-content h2,
+  .post-content h3 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .post-content h2 { font-size: 30px; margin-top: 56px; }
+  .post-content h3 { font-size: 22px; margin-top: 40px; }
+
+  .post-content p { margin-bottom: 20px; }
+
+  .post-content a {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+
+  .post-content a:hover { color: var(--accent); }
+
+  .post-content ul,
+  .post-content ol {
+    padding-left: 24px;
+    margin-bottom: 20px;
+  }
+
+  .post-content li { margin-bottom: 8px; line-height: 1.7; }
+
+  .post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 28px;
+    font-size: 14px;
+  }
+
+  .post-content th,
+  .post-content td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+
+  .post-content th {
+    background: var(--bg-dark, #0B1726);
+    color: #e8e6e1;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .post-content blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 24px;
+    margin: 24px 0;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .post-content code {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 0.88em;
+    background: var(--border);
+    padding: 2px 6px;
+  }
+
+  .post-content pre {
+    background: #1a1a1a;
+    color: #e8e6e1;
+    padding: 24px;
+    overflow-x: auto;
+    margin: 24px 0;
+  }
+
+  .post-content pre code {
+    background: none;
+    padding: 0;
+    font-size: 14px;
+  }
+
+  .post-content figure { margin: 32px 0; }
+
+  .post-content figcaption {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  .post-content img { max-width: 100%; height: auto; }
+
+  /* Diagram figure wrapper — overflow-x so wide SVGs scroll on mobile */
+  .post-diagram {
+    overflow-x: auto;
+  }
+
+  /* Placeholder shown before the real figure is ready */
+  .post-diagram-placeholder {
+    border: 1px dashed var(--border);
+    padding: 40px 32px;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* Note block — contextual aside above the article body */
+  .post-note {
+    border-left: 3px solid var(--accent);
+    background: rgba(13, 115, 119, 0.04);
+    padding: 16px 20px;
+    margin: 0 0 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  /* Footnotes rendered by remark-gfm */
+  .post-content .footnotes {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .post-content .footnotes ol { padding-left: 20px; }
+  .post-content .footnotes li { margin-bottom: 8px; line-height: 1.6; }
+
+  .post-content sup a {
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* Prev / next navigation */
+  .post-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    max-width: 720px;
+  }
+
+  .post-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+    color: var(--text);
+    max-width: 45%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+
+  .post-nav-link:hover { color: var(--accent); }
+
+  .post-nav-label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .post-nav-older { text-align: right; margin-left: auto; }
+
+  .post-back {
+    margin-top: 32px;
+    max-width: 720px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+  }
+
+  .post-back a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+
+  .post-back a:hover { color: var(--accent); }
+
+  @media (max-width: 768px) {
+    .post-wrap { padding: 100px 24px 60px; }
+    .post-body-wrap.has-toc { grid-template-columns: 1fr; }
+    .post-toc { display: none; }
+    .post-nav { flex-direction: column; }
+    .post-nav-older { text-align: left; margin-left: 0; }
+    .post-nav-link { max-width: 100%; }
+  }
+</style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit">Modal Resonance</a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Book an intro call</a></div></nav><main class="post-wrap"><header class="post-header"><div class="post-tags"><span class="post-tag">PII detection</span><span class="post-tag">benchmarks</span><span class="post-tag">privacy</span><span class="post-tag">NLP</span><span class="post-tag">open source</span></div><h1 class="post-title">Benchmarking Open-Source PII Detectors</h1><div class="post-meta"><time dateTime="2026-05-19">May 19, 2026</time><span class="post-meta-sep">·</span><span>13<!-- --> min read</span><span class="post-meta-sep">·</span><span><a href="https://www.linkedin.com/in/matteo-giomi/" target="_blank" rel="noopener noreferrer">Dr. Matteo Giomi</a>, <a href="https://www.linkedin.com/in/oalifdal/" target="_blank" rel="noopener noreferrer">Omar Ali Fdal</a></span></div></header><div class="post-body-wrap has-toc"><aside class="post-toc"><div class="post-toc-label">Contents</div><ol class="post-toc-list"><li class="post-toc-item post-toc-h2"><a href="#the-detectors">The detectors</a></li><li class="post-toc-item post-toc-h3"><a href="#presidio">Presidio</a></li><li class="post-toc-item post-toc-h3"><a href="#gliner">GLiNER</a></li><li class="post-toc-item post-toc-h3"><a href="#openai-privacy-filter">OpenAI Privacy Filter</a></li><li class="post-toc-item post-toc-h2"><a href="#experimental-setup">Experimental Setup</a></li><li class="post-toc-item post-toc-h3"><a href="#benchmark-entities">Benchmark entities</a></li><li class="post-toc-item post-toc-h3"><a href="#datasets">Datasets</a></li><li class="post-toc-item post-toc-h3"><a href="#detector-configuration">Detector configuration</a></li><li class="post-toc-item post-toc-h3"><a href="#evaluation-methodology">Evaluation methodology</a></li><li class="post-toc-item post-toc-h2"><a href="#results">Results</a></li><li class="post-toc-item post-toc-h3"><a href="#detection-performances">Detection performances</a></li><li class="post-toc-item post-toc-h3"><a href="#throughput">Throughput</a></li><li class="post-toc-item post-toc-h3"><a href="#comparing-detectors">Comparing detectors</a></li><li class="post-toc-item post-toc-h2"><a href="#conclusions">Conclusions</a></li><li class="post-toc-item post-toc-h3"><a href="#which-detector-to-pick">Which detector to pick</a></li><li class="post-toc-item post-toc-h3"><a href="#limitations-and-future-directions">Limitations and future directions</a></li></ol></aside><article class="post-content"><aside class="post-note"><p>TL;DR: We benchmarked three open-source PII detectors: Microsoft Presidio, GLiNER, and
+OpenAI&#x27;s Privacy Filter. The results highlight that the right choice and setup depends on
+your entities, hardware, and use-case. OpenAI&#x27;s Privacy Filter offers the best out-of-the-box performance when
+a GPU is available, Presidio wins on pattern-based entities and CPU hardware, and GLiNER is
+the most flexible to configure.</p></aside>
+<p>As AI tools get woven into more workflows, organizations have dramatically expanded both the
+volume of free-text data they process and the range of tasks they perform on it. This increased
+processing also expands the risk of leaking sensitive information contained in the text: a
+client&#x27;s name, a phone number, payment details. To prevent this, it is good practice to remove
+sensitive information from text before using it. This involves two steps: finding the personal
+data in the text, then replacing and masking it in a way that preserves some of the meaning of
+the message. Both steps have their own specific challenges. In this article we will focus on
+detection.</p>
+<p>While easy for a human, detecting sensitive information is a tough problem for a machine: Dates
+show up as &quot;03/04/25&quot;, &quot;March 4th&quot;, or &quot;the fourth&quot;. Names get misspelled, shortened, or
+abbreviated. Account number formats are jurisdiction-specific. The detector needs to be flexible
+enough to cover all these cases while not being over-zealous and flag everything. On top of this,
+the detector also has to be quick: it usually sits in front of every LLM call, so any time it
+spends is time slowing down the user&#x27;s response and experience.</p>
+<p>In this article, we compare detection performances of three prominent open-source PII detectors:
+Microsoft Presidio, GLiNER, and OpenAI&#x27;s Privacy Filter. All three are built on transformer
+models, the same family of neural networks behind modern LLMs. We measure their performances
+using two benchmark datasets in the English language and for a set of six PII categories which
+fall between the capabilities of all three detectors. Beside detection accuracy, we will also
+measure speed in terms of tokens/second.</p>
+<h2 id="the-detectors">The detectors</h2>
+<h3 id="presidio">Presidio</h3>
+<p><a href="https://microsoft.github.io/presidio/">Microsoft Presidio</a> is an open-source framework for detecting and anonymizing personally
+identifiable information (PII) in unstructured text (recently also in images and structured
+data). First released in 2018, it is the more mature solution among the three considered here.</p>
+<p>It combines several detection techniques rather than relying on a single model: regular
+expressions for pattern matching, Named Entity Recognition (NER) powered by NLP models like
+spaCy, checksum validation for entities like phone numbers and social security numbers, and a
+context-aware enhancer that boosts confidence based on surrounding words. It comes as a Python
+SDK with multi-language support and the possibility to expand and customize its recognizers.</p>
+<h3 id="gliner">GLiNER</h3>
+<p><a href="https://github.com/urchade/GLiNER">GLiNER</a> (Generalist and Lightweight model for Named Entity Recognition) takes a different
+approach. Instead of relying on a mix of pattern matching, rule-based components, and NER like
+Presidio, it uses a bidirectional transformer model in a zero-shot fashion: you provide the list
+of entity labels you want to extract at inference time (e.g. &quot;passport number&quot;, &quot;booking ID&quot;,
+&quot;medical condition&quot;) and the model finds them without any retraining, which makes it much more
+flexible than traditional NER models that are locked to the categories they were trained on. This
+flexibility comes at a cost: finding the best configuration for a given use-case may require
+specific optimization.</p>
+<p>It is distributed as a Python package with weights on Hugging Face and runs entirely locally.
+The models are small enough to run on modest hardware. Interestingly, it could be plugged into
+Presidio as an external recognizer to combine the strengths of both.</p>
+<h3 id="openai-privacy-filter">OpenAI Privacy Filter</h3>
+<p><a href="https://openai.com/index/introducing-openai-privacy-filter/">OpenAI Privacy Filter</a> (OPF) is the most recent of the three, released just a few months ago
+(April 2026) as an open-weight model. Like GLiNER it relies on a single bidirectional
+transformer. Unlike GLiNER however, OPF classifies each token into a fixed set of 8 privacy
+categories (private person, address, email, phone, URL, date, account number, and secret) and
+then combines the per-token labels back into coherent spans. The model supports a 128k-token
+context window and is derived from a small gpt-oss checkpoint with a total of 1.5B parameters
+using a sparse Mixture-of-Experts architecture with roughly 50M active parameters for efficiency.</p>
+<h2 id="experimental-setup">Experimental Setup</h2>
+<h3 id="benchmark-entities">Benchmark entities</h3>
+<p>When it comes to flexibility in the number and kind of entities they can detect, the three
+systems we are comparing vary greatly. GLiNER is by far the most flexible: to detect a new
+entity one just adds it to the list of labels at inference time. Presidio could also be
+configured by adding new recognizers, although with some engineering work. The OPF is the least
+configurable: the set of supported entities is fixed and can&#x27;t be changed or expanded.</p>
+<p>For this reason, when comparing the three systems we had to use the most restrictive set of
+entities derived from the entities supported by OPF. We have excluded &quot;secret&quot; as it could not
+be supported out-of-the-box by Presidio. The seven resulting entities and their description are
+presented in the table below. Several categories that Presidio (and GLiNER) handle natively such
+as credit card numbers or IBAN codes are combined into broader classes like ACCOUNT, or are not
+used by the detectors. While this allows for an apples-to-apples comparison, it also negates
+several advantages of the more flexible systems.</p>
+<p>We will explore the limitations and implications of using broader PII categories in a separate
+post where we will investigate the effects of PII masking on AI systems.</p>
+<h3 id="datasets">Datasets</h3>
+<p>To provide ground truth labels for this benchmark, we use two publicly available PII-annotated
+datasets: <a href="https://huggingface.co/datasets/ai4privacy/pii-masking-400k"><code>ai4privacy/pii-masking-400k</code></a> and <a href="https://huggingface.co/datasets/Isotonic/pii-masking-200k"><code>isotonic/pii-masking-200k</code></a>. For each dataset, we
+will use 10,000 samples in the English language. This will give us enough statistics to draw
+firm conclusions, while keeping the experiments light.</p>
+<p><strong>ai4privacy/pii-masking-400k</strong> is an open synthetic dataset specifically designed to train and
+evaluate PII detection and masking models in LLM-oriented contexts. It covers a wide range of
+PII types such as names (split in given/surname), dates of birth, emails, phone numbers, credit
+card numbers, IDs, addresses, ZIP codes, passwords, IP addresses, social/tax numbers, and more.
+Notably, URLs in this dataset are not included among the PIIs.</p>
+<p><strong>isotonic/pii-masking-200k</strong> (train split) is another synthetic dataset, with a richer label
+set. It splits names into first / middle / last / prefix, adds more account subtypes (VINs,
+vehicle registration marks, BICs, masked numbers), and crucially includes URL, IP, IPV4, IPV6
+and MAC labels. The distribution of entities in the samples of the two datasets is shown below.
+For each entity we have at least a few thousand examples combined, ensuring enough statistics to
+draw firm conclusions.</p>
+<figure class="post-diagram"><img src="/assets/img/pii-bench-entity-distribution.png" alt="Entity type distribution — sample vs full dataset for ai4privacy and isotonic" style="width:100%;height:auto;display:block" loading="lazy"/><figcaption>Figure 1. Entity type distribution, sample vs. full dataset, for ai4privacy and isotonic. Each entity has at least a few thousand instances across both datasets.</figcaption></figure>
+<p>The figures below show how the rich taxonomy of each dataset gets mapped into our broader entity
+classes.</p>
+<figure class="post-diagram"><div style="display:flex;gap:16px;align-items:flex-start"><img src="/assets/img/pii-bench-label-mapping-ai4privacy.png" alt="Label mapping from ai4privacy fine-grained entities to the six benchmark categories" style="width:100%;height:auto;display:block;flex:1;min-width:0" loading="lazy"/><img src="/assets/img/pii-bench-label-mapping-isotonic.png" alt="Label mapping from isotonic fine-grained entities to the six benchmark categories" style="width:100%;height:auto;display:block;flex:1;min-width:0" loading="lazy"/></div><figcaption>Figure 2. Label mapping from fine-grained entity types (left) to the six benchmark categories (right), for ai4privacy (left panel) and isotonic (right panel). The isotonic taxonomy is richer and includes the URL category absent in ai4privacy.</figcaption></figure>
+<h3 id="detector-configuration">Detector configuration</h3>
+<p>The degree to which detection can be tuned varies among the three systems. For the sake of
+simplicity we chose to use them out of the box without any adjustment of thresholds or
+fine-tuning.</p>
+<p>We run Presidio with spaCy&#x27;s most capable NLP model (<code>en_core_web_trf</code>), a RoBERTa-based model
+trained on English text. We use out-of-the-box Presidio recognizers to detect fine-grained
+entities such as <code>CREDIT_CARD</code>, <code>IBAN_CODE</code>, <code>US_SSN</code> and collapse them into the seven
+categories we use throughout this benchmark.</p>
+<p>For GLiNER, we use the <code>urchade/gliner_multi_pii-v1</code> model, which is explicitly tuned to detect
+PIIs and natively covers 60+ sensitive entity types. Again, we define fine-grained labels and
+map these back to the seven categories to compare with OPF. For consistency, we try to use the
+same fine-grained labels as Presidio where possible.</p>
+<p>For this benchmark we compare the three systems as &quot;out of the box&quot; as possible, without tuning
+any threshold or optimizing entity definitions and detectors. We leave exploring the optimization
+possibilities of each detector for future work.</p>
+<h3 id="evaluation-methodology">Evaluation methodology</h3>
+<p>To compare detection performances with the ground truth we use the labeled mBERT (multilingual
+BERT) tokens provided by each dataset. Token-level comparison is more meaningful than checking
+for matches of entire spans because it is independent of the internal tokenization of the
+different detectors. For example, one model may flag &quot;Dr. John Smith&quot; as a PERSON while another
+would consider only &quot;John Smith&quot;. If we were to compare spans, these very similar results would
+count as complete misses.</p>
+<p>For each entity, detector, and dataset we compare precision and recall. Precision measures how
+many of the detected tokens are actually PII; Recall measures the fraction of PII tokens detected
+by the model over all tokens that truly were PII. A detector with low precision will lead to
+non-PII text being flagged as sensitive, destroying utility, while having low recall means
+leaking sensitive data. Precision and recall are combined together in the F1 score to provide a
+single number summarizing the performance of a detector.</p>
+<h2 id="results">Results</h2>
+<p>The results presented here are obtained running the benchmarks on a VM equipped with an A10 GPU.</p>
+<h3 id="detection-performances">Detection performances</h3>
+<p>The following figures present the performance of the three detectors on each dataset and entity
+type. Under &quot;ALL&quot; we report the micro-average of the metrics across all the entities.</p>
+<figure class="post-diagram"><img src="/assets/img/pii-bench-perf-ai4privacy.png" alt="Precision, Recall, and F1 score per entity type and detection engine — ai4privacy dataset" style="width:100%;height:auto;display:block" loading="lazy"/><img src="/assets/img/pii-bench-perf-isotonic.png" alt="Precision, Recall, and F1 score per entity type and detection engine — isotonic dataset" style="width:100%;height:auto;display:block;margin-top:16px" loading="lazy"/><figcaption>Figures 3-4. Precision, Recall, and F1 score by entity type and detection engine, for ai4privacy (top) and isotonic (bottom).</figcaption></figure>
+<p>As visible, performances vary depending on entity type. Some entities such as email addresses
+are very easily recognized by all three systems, while others such as ADDRESS or ACCOUNT are
+more difficult to detect. Notably, the performance on DATE varies between datasets, with all
+three detectors performing more poorly on ai4privacy than on isotonic.</p>
+<p>Looking at each detector: Presidio excels at detecting URLs thanks to its regex-based
+recognizers, while it struggles detecting phone numbers or addresses. GLiNER has consistently
+the best performance on ADDRESS while being the least effective for ACCOUNT, with both low
+precision and recall. OPF shows good overall performance across all datasets and entity types.
+Looking at the aggregated scores, Presidio is the strongest on isotonic while OPF leads on
+ai4privacy. For a deeper inspection of the results, confusion matrices are presented in the
+appendix.</p>
+<h3 id="throughput">Throughput</h3>
+<p>While running the benchmark we measured the time each detector took to process each text sample,
+and obtained a measure of throughput using the number of tokens of each text provided by the
+dataset.</p>
+<figure class="post-diagram"><img src="/assets/img/pii-bench-throughput-gpu.png" alt="Detection throughput on an A10 GPU in tokens per second across 10,000 samples" style="width:100%;height:auto;display:block;max-width:600px;margin:0 auto" loading="lazy"/><figcaption>Figure 4. Detection throughput on an A10 GPU in tokens per second across 10,000 samples for each engine and dataset.</figcaption></figure>
+<p>There is no significant difference in speed between the three detectors, with throughputs of
+roughly 2,000 tokens/sec. Presidio, with its mixture of NLP and pattern-based detectors, is
+slightly slower than GLiNER and OPF which run entirely on the GPU. Interestingly, detection
+seems slightly slower for the isotonic samples; this small difference could be due to the
+presence of the additional URL entity, absent in the ai4privacy benchmark.</p>
+<p>The A10 GPU is powerful enough to grant good throughput for all three detectors and make them
+well suited for online usage. The situation is very different when running on less powerful
+hardware or without a GPU. The figure below presents the throughput running the benchmark on a
+consumer-grade laptop without GPU and 16 GB of RAM. In this setup Presidio maintains a
+throughput of 500 tokens/s, while GLiNER manages roughly 200 tokens/s. OPF takes the biggest
+performance hit on CPU-only, managing only about 20 tokens per second.</p>
+<figure class="post-diagram"><img src="/assets/img/pii-bench-throughput-cpu.png" alt="Detection throughput on CPU-only hardware in tokens per second" style="width:100%;height:auto;display:block;max-width:600px;margin:0 auto" loading="lazy"/><figcaption>Figure 5. Detection throughput on a CPU-only consumer laptop (16 GB RAM) in tokens per second across 10,000 samples for each engine and dataset.</figcaption></figure>
+<h3 id="comparing-detectors">Comparing detectors</h3>
+<p>The following plot summarizes the main results of this benchmark, including detection performance
+(micro-averaged F1 score) and mean throughput. Presidio offers the widest range of variation,
+presenting both the best and the worst overall F1 score (for isotonic and ai4privacy,
+respectively). GLiNER and OPF are more consistent and similar in performance, with OPF providing
+better detection accuracy on both datasets while being only slightly slower than GLiNER.</p>
+<figure class="post-diagram"><img src="/assets/img/pii-bench-f1-vs-throughput.png" alt="Micro-F1 vs mean throughput — three detectors across two datasets" style="width:100%;height:auto;display:block;max-width:640px;margin:0 auto" loading="lazy"/><figcaption>Figure 6. Micro-F1 vs. mean throughput. Results for the two datasets are indicated by marker shape and by color for the three detectors. Shaded points represent per-entity results; solid points are the micro-aggregated F1. Top-right corner is best.</figcaption></figure>
+<h2 id="conclusions">Conclusions</h2>
+<p>The results discussed above show that detection performances depend greatly on entity type and
+even dataset, and that different detector engines perform better on different entities. Presidio
+shines on structured, pattern-rich entities like URLs and EMAIL thanks to its regex-based
+recognizers, GLiNER leads on ADDRESS detection, and OPF delivers the most balanced performance
+across entity types and datasets. On the A10 GPU, throughput differences are minor and all three
+detectors run at roughly 2,000 tokens/sec, making them all viable for online use in this setup.</p>
+<h3 id="which-detector-to-pick">Which detector to pick</h3>
+<p>The choice of the best detector depends on the deployment context and priorities. OPF is the
+strongest general-purpose pick, offering good detection performance and throughput right out of
+the box. However, if the workload involves a fixed, narrow set of well-structured entities (URLs,
+emails, credit cards, SSNs) or needs to run on CPU-only hardware, Presidio is to be preferred:
+it preserves a useful 500 tokens/sec on a laptop without GPU and outperforms the other detectors
+on entities that can be detected via pattern matching. Among the three detectors, GLiNER is the
+most flexible and easily configurable, supporting custom entity types and domain-specific labels
+out of the box without retraining.</p>
+<h3 id="limitations-and-future-directions">Limitations and future directions</h3>
+<p>This benchmark was deliberately conservative: all three detectors were run out of the box, with
+no threshold tuning, fine-tuning, or entity-definition optimization, and we restricted ourselves
+to the lowest-common-denominator entity set imposed by OPF&#x27;s fixed taxonomy. This negates much
+of the flexibility advantage of GLiNER and Presidio. The evaluation is also limited to the
+English language.</p>
+<p>In a future piece, we will explore per-detector optimization (custom recognizers in Presidio,
+label engineering and threshold tuning in GLiNER) as well as the effects of using broad PII
+categories as OPF does (e.g. &quot;account&quot; instead of separate entities for IBAN codes, credit card
+numbers, etc.) on masking quality and LLM utility for downstream tasks.</p></article></div><nav class="post-nav" aria-label="Post navigation"><a href="/writing/ai-lifecycle-risks/" class="post-nav-link post-nav-older"><span class="post-nav-label">Older</span><span>Mapping Privacy Risk Across the AI Lifecycle</span></a></nav><div class="post-back"><a href="/writing/">← All writing</a></div></main><footer class="footer"><div class="footer-text">Modal Resonance · AI Advisory · Berlin, Germany</div><a href="/writing/feed.xml" class="footer-text" style="color:inherit;text-decoration:none">RSS</a></footer></div></div>
+</body>
+</html>

@@ -7,6 +7,14 @@
     <language>en</language>
     <atom:link href="https://modalresonance.com/writing/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Benchmarking Open-Source PII Detectors</title>
+      <link>https://modalresonance.com/writing/pii-benchmark/</link>
+      <description><![CDATA[We benchmarked three open-source PII detectors (Microsoft Presidio, GLiNER, and OpenAI's Privacy Filter) on detection accuracy and throughput across two datasets and six entity types. OPF leads out-of-the-box on a GPU, Presidio wins on CPU and pattern-rich entities, GLiNER is the most flexible to configure.]]></description>
+      <pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://modalresonance.com/writing/pii-benchmark/</guid>
+      <author>Matteo Giomi, Omar Ali Fdal</author>
+    </item>
+    <item>
       <title>Mapping Privacy Risk Across the AI Lifecycle</title>
       <link>https://modalresonance.com/writing/ai-lifecycle-risks/</link>
       <description><![CDATA[A structured breakdown of where privacy risk lives across the four phases of the AI lifecycle, and what genuinely changes with generative AI versus traditional ML.]]></description>
