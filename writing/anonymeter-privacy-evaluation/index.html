@@ -420,7 +420,8 @@
       letter-spacing: 1px; text-transform: uppercase;
       transition: background 0.25s; margin-top: 8px;
     }
-    .form-submit:hover { background: var(--accent); }
+    .form-submit:hover:not(:disabled) { background: var(--accent); }
+    .form-submit:disabled { opacity: 0.6; cursor: default; }
     .contact-form-label {
       font-family: 'DM Sans', sans-serif; font-size: 11px;
       letter-spacing: 2px; text-transform: uppercase;
@@ -439,6 +440,28 @@
       font-family: 'DM Sans', sans-serif; font-size: 12px;
       color: #999; letter-spacing: 0.5px;
     }
+    .footer-links { display: flex; gap: 24px; align-items: center; }
+    .footer-links a { text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+
+    .form-privacy-note {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: var(--text-secondary); margin-top: 16px; line-height: 1.6;
+    }
+    .form-privacy-note a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); }
+    .form-privacy-note a:hover { color: var(--accent); }
+    .form-honeypot { display: none; }
+    .form-status:empty { display: none; }
+    .form-status {
+      font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.6;
+      color: var(--text); margin-top: 24px;
+      padding: 16px 20px; border-left: 2px solid var(--accent);
+    }
+    .form-status p { margin: 0; }
+    .form-status ul { margin: 8px 0 0; padding-left: 20px; font-size: 13px; color: var(--text-secondary); }
+    .form-status a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); }
+    .form-status a:hover { color: var(--accent); }
+    .form-status-error { border-left-color: #b42318; }
 
     .capabilities-list { margin-top: 64px; }
     .capability-item {
@@ -550,6 +573,7 @@
       .capability-item { grid-template-columns: 1fr; gap: 12px; }
       .step-item { grid-template-columns: 48px 1fr; gap: 20px; }
       .step-number { font-size: 28px; }
+      .footer { padding: 32px 24px; flex-direction: column; align-items: flex-start; gap: 16px; }
     }
   </style><style>
   a.nav-cta { text-decoration: none; }
@@ -873,7 +897,7 @@
     .post-nav-older { text-align: left; margin-left: 0; }
     .post-nav-link { max-width: 100%; }
   }
-</style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit"><img src="/assets/img/wordmark.png" alt="Modal Resonance" class="nav-logo-img"/></a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Book an intro call</a></div></nav><main class="post-wrap"><header class="post-header"><div class="post-tags"><span class="post-tag">synthetic data</span><span class="post-tag">privacy</span><span class="post-tag">GDPR</span><span class="post-tag">Anonymeter</span><span class="post-tag">open source</span><span class="post-tag">PoPETs</span></div><h1 class="post-title">Empirical Privacy Risk Assessment in Tabular Synthetic Data</h1><div class="post-meta"><time dateTime="2026-06-02">June 2, 2026</time><span class="post-meta-sep">·</span><span>6<!-- --> min read</span><span class="post-meta-sep">·</span><span><a href="https://www.linkedin.com/in/matteo-giomi/" target="_blank" rel="noopener noreferrer">Dr. Matteo Giomi</a>, <a href="https://www.linkedin.com/in/oalifdal/" target="_blank" rel="noopener noreferrer">Omar Ali Fdal</a></span></div></header><div class="post-body-wrap has-toc"><aside class="post-toc"><div class="post-toc-label">Contents</div><ol class="post-toc-list"><li class="post-toc-item post-toc-h2"><a href="#three-risk-indicators-one-framework">Three risk indicators, one framework</a></li><li class="post-toc-item post-toc-h2"><a href="#separating-population-level-utility-from-individual-level-leakage">Separating population-level utility from individual-level leakage</a></li><li class="post-toc-item post-toc-h2"><a href="#key-findings">Key findings</a></li><li class="post-toc-item post-toc-h2"><a href="#cnil-evaluation">CNIL evaluation</a></li></ol></aside><article class="post-content"><aside class="post-note"><p>TL;DR: The European regulatory framework identifies three types of privacy risk as the core indicators of anonymization: singling out, linkability, and inference. Anonymeter is an open-source empirical tool that measures all three risks consistently for synthetic data, using an adversarial methodology that separates population-level utility (insights) from individual-level leakage (secrets).</p></aside>
+</style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit"><img src="/assets/img/wordmark.png" alt="Modal Resonance" class="nav-logo-img"/></a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Contact</a></div></nav><main class="post-wrap"><header class="post-header"><div class="post-tags"><span class="post-tag">synthetic data</span><span class="post-tag">privacy</span><span class="post-tag">GDPR</span><span class="post-tag">Anonymeter</span><span class="post-tag">open source</span><span class="post-tag">PoPETs</span></div><h1 class="post-title">Empirical Privacy Risk Assessment in Tabular Synthetic Data</h1><div class="post-meta"><time dateTime="2026-06-02">June 2, 2026</time><span class="post-meta-sep">·</span><span>6<!-- --> min read</span><span class="post-meta-sep">·</span><span><a href="https://www.linkedin.com/in/matteo-giomi/" target="_blank" rel="noopener noreferrer">Dr. Matteo Giomi</a>, <a href="https://www.linkedin.com/in/oalifdal/" target="_blank" rel="noopener noreferrer">Omar Ali Fdal</a></span></div></header><div class="post-body-wrap has-toc"><aside class="post-toc"><div class="post-toc-label">Contents</div><ol class="post-toc-list"><li class="post-toc-item post-toc-h2"><a href="#three-risk-indicators-one-framework">Three risk indicators, one framework</a></li><li class="post-toc-item post-toc-h2"><a href="#separating-population-level-utility-from-individual-level-leakage">Separating population-level utility from individual-level leakage</a></li><li class="post-toc-item post-toc-h2"><a href="#key-findings">Key findings</a></li><li class="post-toc-item post-toc-h2"><a href="#cnil-evaluation">CNIL evaluation</a></li></ol></aside><article class="post-content"><aside class="post-note"><p>TL;DR: The European regulatory framework identifies three types of privacy risk as the core indicators of anonymization: singling out, linkability, and inference. Anonymeter is an open-source empirical tool that measures all three risks consistently for synthetic data, using an adversarial methodology that separates population-level utility (insights) from individual-level leakage (secrets).</p></aside>
 <p>The Article 29 Working Party, predecessor of the European Data Protection Board, identified three types of privacy risk as the core indicators of whether data has been effectively anonymized: singling out, linkability, and inference. These categories were established in the Opinion 05/2014 on Anonymization Techniques<sup><a href="#user-content-fn-1" id="user-content-fnref-1" data-footnote-ref="true" aria-describedby="footnote-label">1</a></sup> and remain the standard reference for assessing factual anonymization under EU data protection law. For synthetic data, while most attention focused on fit-for-use evaluations, the question of which risk types matter and how to measure them empirically had not been answered in a unified, practically usable way before Anonymeter.</p>
 <p>In 2023, we published Anonymeter in the Proceedings on Privacy Enhancing Technologies symposium (PoPETs), a leading venue for privacy research.<sup><a href="#user-content-fn-2" id="user-content-fnref-2" data-footnote-ref="true" aria-describedby="footnote-label">2</a></sup> The paper presents a unified framework for quantifying all three privacy risk indicators for synthetic tabular data. The library is open source,<sup><a href="#user-content-fn-3" id="user-content-fnref-3" data-footnote-ref="true" aria-describedby="footnote-label">3</a></sup> and the approach has been evaluated positively by France&#x27;s data protection authority (CNIL).<sup><a href="#user-content-fn-4" id="user-content-fnref-4" data-footnote-ref="true" aria-describedby="footnote-label">4</a></sup></p>
 <h2 id="three-risk-indicators-one-framework">Three risk indicators, one framework</h2>
@@ -922,6 +946,6 @@
 <p>Giomi, M., Vitacolonna, N., Ali Fdal, O., &quot;Anonymeter Application to CRC Diverse Communities Excerpts: A Privacy Perspective&quot;, Privacy Data Management Conference 2023. <a href="https://github.com/usnistgov/privacy_collaborative_research_cycle/blob/nist-pages/2023_workshop_contributions/CRC2023_Anonomyter_Application_to_CRC.pdf">https://github.com/usnistgov/privacy_collaborative_research_cycle/blob/nist-pages/2023_workshop_contributions/CRC2023_Anonomyter_Application_to_CRC.pdf</a> <a href="#user-content-fnref-5" data-footnote-backref="" aria-label="Back to reference 5" class="data-footnote-backref">↩</a></p>
 </li>
 </ol>
-</section></article></div><nav class="post-nav" aria-label="Post navigation"><a href="/writing/nist-crc-privacy-risk-evaluation/" class="post-nav-link"><span class="post-nav-label">Newer</span><span>Privacy risks evaluation at scale: NIST&#x27;s Collaborative Research Cycle</span></a><a href="/writing/pii-benchmark/" class="post-nav-link post-nav-older"><span class="post-nav-label">Older</span><span>Benchmarking Open-Source PII Detectors</span></a></nav><div class="post-back"><a href="/writing/">← All writing</a></div></main><footer class="footer"><div class="footer-text">Modal Resonance · AI Advisory · Berlin, Germany</div><a href="/writing/feed.xml" class="footer-text" style="color:inherit;text-decoration:none">RSS</a></footer></div></div>
+</section></article></div><nav class="post-nav" aria-label="Post navigation"><a href="/writing/nist-crc-privacy-risk-evaluation/" class="post-nav-link"><span class="post-nav-label">Newer</span><span>Privacy risks evaluation at scale: NIST&#x27;s Collaborative Research Cycle</span></a><a href="/writing/pii-benchmark/" class="post-nav-link post-nav-older"><span class="post-nav-label">Older</span><span>Benchmarking Open-Source PII Detectors</span></a></nav><div class="post-back"><a href="/writing/">← All writing</a></div></main><footer class="footer"><div class="footer-text">Modal Resonance · AI Advisory · Berlin, Germany</div><div class="footer-links"><a href="/writing/feed.xml" class="footer-text">RSS</a><a href="/impressum/" class="footer-text">Impressum</a><a href="/privacy/" class="footer-text">Privacy</a></div></footer></div></div>
 </body>
 </html>

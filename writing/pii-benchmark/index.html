@@ -419,7 +419,8 @@
       letter-spacing: 1px; text-transform: uppercase;
       transition: background 0.25s; margin-top: 8px;
     }
-    .form-submit:hover { background: var(--accent); }
+    .form-submit:hover:not(:disabled) { background: var(--accent); }
+    .form-submit:disabled { opacity: 0.6; cursor: default; }
     .contact-form-label {
       font-family: 'DM Sans', sans-serif; font-size: 11px;
       letter-spacing: 2px; text-transform: uppercase;
@@ -438,6 +439,28 @@
       font-family: 'DM Sans', sans-serif; font-size: 12px;
       color: #999; letter-spacing: 0.5px;
     }
+    .footer-links { display: flex; gap: 24px; align-items: center; }
+    .footer-links a { text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+
+    .form-privacy-note {
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: var(--text-secondary); margin-top: 16px; line-height: 1.6;
+    }
+    .form-privacy-note a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); }
+    .form-privacy-note a:hover { color: var(--accent); }
+    .form-honeypot { display: none; }
+    .form-status:empty { display: none; }
+    .form-status {
+      font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.6;
+      color: var(--text); margin-top: 24px;
+      padding: 16px 20px; border-left: 2px solid var(--accent);
+    }
+    .form-status p { margin: 0; }
+    .form-status ul { margin: 8px 0 0; padding-left: 20px; font-size: 13px; color: var(--text-secondary); }
+    .form-status a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); }
+    .form-status a:hover { color: var(--accent); }
+    .form-status-error { border-left-color: #b42318; }
 
     .capabilities-list { margin-top: 64px; }
     .capability-item {
@@ -549,6 +572,7 @@
       .capability-item { grid-template-columns: 1fr; gap: 12px; }
       .step-item { grid-template-columns: 48px 1fr; gap: 20px; }
       .step-number { font-size: 28px; }
+      .footer { padding: 32px 24px; flex-direction: column; align-items: flex-start; gap: 16px; }
     }
   </style><style>
   a.nav-cta { text-decoration: none; }
@@ -872,7 +896,7 @@
     .post-nav-older { text-align: left; margin-left: 0; }
     .post-nav-link { max-width: 100%; }
   }
-</style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit"><img src="/assets/img/wordmark.png" alt="Modal Resonance" class="nav-logo-img"/></a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Book an intro call</a></div></nav><main class="post-wrap"><header class="post-header"><div class="post-tags"><span class="post-tag">PII detection</span><span class="post-tag">benchmarks</span><span class="post-tag">privacy</span><span class="post-tag">NLP</span><span class="post-tag">open source</span></div><h1 class="post-title">Benchmarking Open-Source PII Detectors</h1><div class="post-meta"><time dateTime="2026-05-19">May 19, 2026</time><span class="post-meta-sep">·</span><span>13<!-- --> min read</span><span class="post-meta-sep">·</span><span><a href="https://www.linkedin.com/in/matteo-giomi/" target="_blank" rel="noopener noreferrer">Dr. Matteo Giomi</a>, <a href="https://www.linkedin.com/in/oalifdal/" target="_blank" rel="noopener noreferrer">Omar Ali Fdal</a></span></div></header><div class="post-body-wrap has-toc"><aside class="post-toc"><div class="post-toc-label">Contents</div><ol class="post-toc-list"><li class="post-toc-item post-toc-h2"><a href="#the-detectors">The detectors</a></li><li class="post-toc-item post-toc-h3"><a href="#presidio">Presidio</a></li><li class="post-toc-item post-toc-h3"><a href="#gliner">GLiNER</a></li><li class="post-toc-item post-toc-h3"><a href="#openai-privacy-filter">OpenAI Privacy Filter</a></li><li class="post-toc-item post-toc-h2"><a href="#experimental-setup">Experimental Setup</a></li><li class="post-toc-item post-toc-h3"><a href="#benchmark-entities">Benchmark entities</a></li><li class="post-toc-item post-toc-h3"><a href="#datasets">Datasets</a></li><li class="post-toc-item post-toc-h3"><a href="#detector-configuration">Detector configuration</a></li><li class="post-toc-item post-toc-h3"><a href="#evaluation-methodology">Evaluation methodology</a></li><li class="post-toc-item post-toc-h2"><a href="#results">Results</a></li><li class="post-toc-item post-toc-h3"><a href="#detection-performances">Detection performances</a></li><li class="post-toc-item post-toc-h3"><a href="#throughput">Throughput</a></li><li class="post-toc-item post-toc-h3"><a href="#comparing-detectors">Comparing detectors</a></li><li class="post-toc-item post-toc-h2"><a href="#conclusions">Conclusions</a></li><li class="post-toc-item post-toc-h3"><a href="#which-detector-to-pick">Which detector to pick</a></li><li class="post-toc-item post-toc-h3"><a href="#limitations-and-future-directions">Limitations and future directions</a></li></ol></aside><article class="post-content"><aside class="post-note"><p>TL;DR: We benchmarked three open-source PII detectors: Microsoft Presidio, GLiNER, and
+</style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit"><img src="/assets/img/wordmark.png" alt="Modal Resonance" class="nav-logo-img"/></a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Contact</a></div></nav><main class="post-wrap"><header class="post-header"><div class="post-tags"><span class="post-tag">PII detection</span><span class="post-tag">benchmarks</span><span class="post-tag">privacy</span><span class="post-tag">NLP</span><span class="post-tag">open source</span></div><h1 class="post-title">Benchmarking Open-Source PII Detectors</h1><div class="post-meta"><time dateTime="2026-05-19">May 19, 2026</time><span class="post-meta-sep">·</span><span>13<!-- --> min read</span><span class="post-meta-sep">·</span><span><a href="https://www.linkedin.com/in/matteo-giomi/" target="_blank" rel="noopener noreferrer">Dr. Matteo Giomi</a>, <a href="https://www.linkedin.com/in/oalifdal/" target="_blank" rel="noopener noreferrer">Omar Ali Fdal</a></span></div></header><div class="post-body-wrap has-toc"><aside class="post-toc"><div class="post-toc-label">Contents</div><ol class="post-toc-list"><li class="post-toc-item post-toc-h2"><a href="#the-detectors">The detectors</a></li><li class="post-toc-item post-toc-h3"><a href="#presidio">Presidio</a></li><li class="post-toc-item post-toc-h3"><a href="#gliner">GLiNER</a></li><li class="post-toc-item post-toc-h3"><a href="#openai-privacy-filter">OpenAI Privacy Filter</a></li><li class="post-toc-item post-toc-h2"><a href="#experimental-setup">Experimental Setup</a></li><li class="post-toc-item post-toc-h3"><a href="#benchmark-entities">Benchmark entities</a></li><li class="post-toc-item post-toc-h3"><a href="#datasets">Datasets</a></li><li class="post-toc-item post-toc-h3"><a href="#detector-configuration">Detector configuration</a></li><li class="post-toc-item post-toc-h3"><a href="#evaluation-methodology">Evaluation methodology</a></li><li class="post-toc-item post-toc-h2"><a href="#results">Results</a></li><li class="post-toc-item post-toc-h3"><a href="#detection-performances">Detection performances</a></li><li class="post-toc-item post-toc-h3"><a href="#throughput">Throughput</a></li><li class="post-toc-item post-toc-h3"><a href="#comparing-detectors">Comparing detectors</a></li><li class="post-toc-item post-toc-h2"><a href="#conclusions">Conclusions</a></li><li class="post-toc-item post-toc-h3"><a href="#which-detector-to-pick">Which detector to pick</a></li><li class="post-toc-item post-toc-h3"><a href="#limitations-and-future-directions">Limitations and future directions</a></li></ol></aside><article class="post-content"><aside class="post-note"><p>TL;DR: We benchmarked three open-source PII detectors: Microsoft Presidio, GLiNER, and
 OpenAI&#x27;s Privacy Filter. The results highlight that the right choice and setup depends on
 your entities, hardware, and use-case. OpenAI&#x27;s Privacy Filter offers the best out-of-the-box performance when
 a GPU is available, Presidio wins on pattern-based entities and CPU hardware, and GLiNER is
@@ -1057,6 +1081,6 @@ English language.</p>
 <p>In a future piece, we will explore per-detector optimization (custom recognizers in Presidio,
 label engineering and threshold tuning in GLiNER) as well as the effects of using broad PII
 categories as OPF does (e.g. &quot;account&quot; instead of separate entities for IBAN codes, credit card
-numbers, etc.) on masking quality and LLM utility for downstream tasks.</p></article></div><nav class="post-nav" aria-label="Post navigation"><a href="/writing/anonymeter-privacy-evaluation/" class="post-nav-link"><span class="post-nav-label">Newer</span><span>Empirical Privacy Risk Assessment in Tabular Synthetic Data</span></a><a href="/writing/ai-lifecycle-risks/" class="post-nav-link post-nav-older"><span class="post-nav-label">Older</span><span>Mapping Privacy Risk Across the AI Lifecycle</span></a></nav><div class="post-back"><a href="/writing/">← All writing</a></div></main><footer class="footer"><div class="footer-text">Modal Resonance · AI Advisory · Berlin, Germany</div><a href="/writing/feed.xml" class="footer-text" style="color:inherit;text-decoration:none">RSS</a></footer></div></div>
+numbers, etc.) on masking quality and LLM utility for downstream tasks.</p></article></div><nav class="post-nav" aria-label="Post navigation"><a href="/writing/anonymeter-privacy-evaluation/" class="post-nav-link"><span class="post-nav-label">Newer</span><span>Empirical Privacy Risk Assessment in Tabular Synthetic Data</span></a><a href="/writing/ai-lifecycle-risks/" class="post-nav-link post-nav-older"><span class="post-nav-label">Older</span><span>Mapping Privacy Risk Across the AI Lifecycle</span></a></nav><div class="post-back"><a href="/writing/">← All writing</a></div></main><footer class="footer"><div class="footer-text">Modal Resonance · AI Advisory · Berlin, Germany</div><div class="footer-links"><a href="/writing/feed.xml" class="footer-text">RSS</a><a href="/impressum/" class="footer-text">Impressum</a><a href="/privacy/" class="footer-text">Privacy</a></div></footer></div></div>
 </body>
 </html>
