@@ -127,6 +127,9 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* Nav links are plain #section anchors; keep the homepage's smooth scroll */
+    html { scroll-behavior: smooth; }
+
     :root {
       --text: #1a1a1a;
 --text-secondary: #4a5568;
@@ -135,39 +138,25 @@
 --accent: #0D7377;
 --accent-light: #14919B;
 --border: #dce3e8;
-    }
-
-    .theme-switcher {
-      position: fixed; bottom: 24px; right: 24px; z-index: 200;
-      display: none; gap: 8px; padding: 10px 14px;
-      background: rgba(0,0,0,0.85); border-radius: 8px;
-      backdrop-filter: blur(12px);
-    }
-    .theme-btn {
-      width: 28px; height: 28px; border-radius: 50%;
-      border: 2px solid transparent; cursor: pointer;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .theme-btn:hover { transform: scale(1.15); }
-    .theme-btn.active { border-color: #fff; }
-    .theme-label {
-      font-family: 'DM Sans', sans-serif; font-size: 11px;
-      color: #999; letter-spacing: 0.5px;
-      display: flex; align-items: center; margin-right: 6px;
+      /* Shared left/right edge: 48px, or wider so content stays in one centered 1344px column */
+      --gutter: max(48px, (100% - 1344px) / 2);
+      /* Deep teal for the dark band and the footer: the accent mixed into the dark navy */
+      --band: color-mix(in srgb, var(--accent) 35%, var(--bg-dark));
     }
 
     .nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 48px;
+      padding: 20px var(--gutter);
       background: rgba(247, 249, 250, 0.92);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
     }
     .nav-logo {
       display: flex; align-items: center; cursor: pointer;
+      min-width: 0;
     }
-    .nav-logo-img { height: 32px; width: auto; display: block; }
+    /* Shrinks to fit narrow screens instead of pushing the menu off the edge */
+    .nav-logo-img { height: auto; width: 100%; max-width: 340px; display: block; }
     .nav-logo span { color: var(--accent); }
     .nav-links { display: flex; gap: 32px; align-items: center; }
     .nav-link {
@@ -180,24 +169,44 @@
     .nav-link:hover { color: var(--text); }
     .nav-cta {
       font-family: 'DM Sans', sans-serif; font-size: 13px;
-      padding: 10px 24px; background: var(--text);
-      color: var(--bg); border: none; cursor: pointer;
+      padding: 10px 24px; background: var(--accent);
+      color: #fff; border: none; cursor: pointer; text-decoration: none;
       letter-spacing: 0.5px; text-transform: uppercase;
       transition: background 0.25s;
     }
-    .nav-cta:hover { background: var(--accent); }
+    .nav-cta:hover { background: var(--text); }
+
+    /* Mobile menu: a <details> disclosure, so it works without JavaScript */
+    .nav-menu { display: none; flex-shrink: 0; margin-left: 16px; }
+    .nav-menu-button {
+      list-style: none; cursor: pointer; display: flex;
+      padding: 6px; color: var(--text);
+    }
+    .nav-menu-button::-webkit-details-marker { display: none; }
+    .nav-menu-panel {
+      position: absolute; top: 100%; left: 0; right: 0;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 20px;
+      padding: 24px var(--gutter);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-menu-panel .nav-cta { text-decoration: none; }
 
     .hero {
       min-height: 100vh; display: flex; flex-direction: column;
-      justify-content: center; padding: 140px 48px 80px;
+      justify-content: center; padding: 140px var(--gutter) 80px;
       position: relative; overflow: hidden;
     }
-    .hero::before {
-      content: ''; position: absolute; top: -200px; right: -200px;
-      width: 800px; height: 800px;
-      background: radial-gradient(circle, rgba(13, 115, 119, 0.04) 0%, transparent 70%);
-      pointer-events: none;
+    .hero > :not(.hero-field) { position: relative; z-index: 1; }
+    .hero-field {
+      position: absolute; inset: 0; pointer-events: none;
+      --field-fade: linear-gradient(to right, #000 0%, rgba(0,0,0,0.75) 6%, rgba(0,0,0,0.45) 12%, rgba(0,0,0,0.2) 18%, rgba(0,0,0,0.12) 30%, rgba(0,0,0,0.3) 51.6%, #000 70.4%);
+      -webkit-mask-image: var(--field-fade), linear-gradient(to bottom, #000 70%, transparent);
+      -webkit-mask-composite: source-in;
+      mask-image: var(--field-fade), linear-gradient(to bottom, #000 70%, transparent);
+      mask-composite: intersect;
     }
+    .hero-field svg { width: 100%; height: 100%; display: block; }
     .hero-title {
       font-family: 'DM Sans', sans-serif;
       font-size: clamp(42px, 6vw, 72px); line-height: 1.08;
@@ -207,7 +216,7 @@
     .hero-sub {
       font-family: 'DM Sans', sans-serif; font-size: 18px;
       line-height: 1.7; color: var(--text-secondary);
-      max-width: 560px; font-weight: 300;
+      max-width: 680px; font-weight: 300;
     }
     .hero-scroll {
       margin-top: 80px; display: flex; align-items: center; gap: 12px;
@@ -223,7 +232,7 @@
     }
     .hero-scroll:hover .scroll-line { width: 64px; }
 
-    .section { padding: 120px 48px; }
+    .section { padding: 96px var(--gutter); }
     .section-dark { background: var(--bg-dark); color: #e8e6e1; }
     .section-title {
       font-family: 'DM Sans', sans-serif;
@@ -233,39 +242,91 @@
     .section-subtitle {
       font-family: 'DM Sans', sans-serif; font-size: 16px;
       line-height: 1.7; color: var(--text-secondary);
-      max-width: 900px; font-weight: 300;
+      max-width: 680px; font-weight: 300;
     }
     .section-dark .section-subtitle { color: #999; }
+    .section-band { background: var(--band); color: #fff; }
+    .background-layout { display: grid; gap: 40px; margin-top: 32px; }
+    .team-subsection {
+      margin-top: 40px; padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+    .team-subsection-title {
+      font-family: 'DM Sans', sans-serif; font-size: 32px; font-weight: 700;
+      letter-spacing: -0.02em; line-height: 1.2;
+    }
+    .section-tint { background: color-mix(in srgb, var(--accent) 6%, var(--bg)); }
 
+    .cluster {
+      display: grid; grid-template-columns: 300px 1fr; gap: 48px;
+      margin-top: 56px;
+    }
+    .cluster-heading {
+      font-family: 'DM Sans', sans-serif; font-size: 32px; font-weight: 700;
+      letter-spacing: -0.02em; line-height: 1.2; color: var(--accent);
+    }
+    .cluster-subtitle {
+      margin-top: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.5;
+      color: var(--muted, #888);
+    }
+    .engagement { border-bottom: 1px solid var(--border); }
+    .engagement:first-child { border-top: 1px solid var(--border); }
+    .engagement-summary {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 24px;
+      padding: 20px 0; cursor: pointer; list-style: none;
+    }
+    .engagement-summary::-webkit-details-marker { display: none; }
+    .engagement-title {
+      font-family: 'DM Sans', sans-serif; font-size: 20px; font-weight: 600;
+      line-height: 1.3; color: var(--text);
+    }
+    .engagement-toggle::after {
+      content: 'Show +'; white-space: nowrap;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--accent);
+    }
+    .engagement[open] .engagement-toggle::after { content: 'Hide −'; opacity: 0.5; }
+    .engagement-summary:hover .engagement-title { color: var(--accent); }
+    .engagement-body { padding: 0 0 28px; max-width: 680px; }
+    .engagement-desc {
+      font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.65;
+      color: var(--text); margin-bottom: 20px;
+    }
+    .engagement-label {
+      font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--muted, #888); margin-bottom: 10px;
+    }
+    .engagement-outcomes { list-style: none; margin-bottom: 20px; }
+    .engagement-outcomes li {
+      font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.55;
+      color: var(--text); padding-left: 16px; position: relative; margin-bottom: 6px;
+    }
+    .engagement-outcomes li::before {
+      content: ''; position: absolute; left: 0; top: 10px;
+      width: 6px; height: 1px; background: var(--accent);
+    }
     .problems-grid {
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: 2px; margin-top: 64px;
+      gap: 0; margin-top: 64px;
     }
     .problems-grid > div { height: 100%; }
     .problem-card {
-      /* background: #fff; */
-      background: transparent;
       padding: 48px;
-      cursor: pointer;
-      border: 1px solid var(--border);
+      cursor: pointer; color: #F6F3EF;
       transition: all 0.35s ease; position: relative;
       overflow: hidden;
       height: 100%;
     }
-    .problem-card:hover { border-color: transparent; box-shadow: 0 8px 40px rgba(0,0,0,0.06); }
-    .problem-tag {
-      font-family: 'DM Sans', sans-serif; font-size: 11px;
-      letter-spacing: 2px; text-transform: uppercase;
-      margin-bottom: 20px; font-weight: 500;
-      color: var(--card-color);
-    }
+    .problem-card:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.15); }
     .problem-title {
       font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 24px;
-      line-height: 1.25; margin-bottom: 16px; letter-spacing: -0.01em;
+      line-height: 1.25; letter-spacing: -0.01em;
     }
     .problem-desc {
       font-family: 'DM Sans', sans-serif; font-size: 16x;
       line-height: 1.7; color: var(--text-secondary); font-weight: 300;
+      margin-bottom: 24px;
     }
     .problem-expand {
       margin-top: 24px; overflow: hidden;
@@ -291,16 +352,13 @@
       letter-spacing: 2px; text-transform: uppercase;
       color: #999; margin-bottom: 12px;
     }
+    .problem-card .problem-desc,
+    .problem-card .signal-item,
+    .problem-card .signal-item::before,
+    .problem-card .problem-approach,
+    .problem-card .problem-indicators-label { color: rgba(246, 243, 239, 0.95); }
+    .problem-card .problem-expand-inner { border-top-color: rgba(255,255,255,0.15); }
 
-    .problem-card-solid { color: #F6F3EF; border-color: transparent; }
-    .problem-card-solid .problem-tag { color: rgba(246, 243, 239, 0.99); }
-    .problem-card-solid .problem-desc,
-    .problem-card-solid .signal-item { color: rgba(246, 243, 239, 0.95); }
-    .problem-card-solid .signal-item::before { color: rgba(246, 243, 239, 0.95); }
-    .problem-card-solid .problem-approach { color: rgba(246, 243, 239, 0.95); }
-    .problem-card-solid .problem-indicators-label { color: rgba(246, 243, 239, 0.95); }
-    .problem-card-solid .problem-expand-inner { border-top-color: rgba(255,255,255,0.15); }
-    .problem-card-solid:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.15); border-color: transparent; }
 
 
     .approach-grid {
@@ -320,15 +378,26 @@
       line-height: 1.75; color: #888; font-weight: 300;
     }
 
-    .background-section { margin-top: 64px; max-width: 720px; }
+    /* Two text columns across the full width, one below 1024px */
+    .background-section { column-count: 2; column-gap: 64px; }
+    @media (max-width: 1023px) {
+      .background-section { column-count: 1; max-width: 680px; }
+    }
     .background-text {
       font-family: 'DM Sans', sans-serif; font-size: 14px;
       line-height: 1.85; color: var(--text-secondary); font-weight: 300;
     }
+    .background-text { break-inside: avoid; }
+    .background-text + .background-text { margin-top: 16px; }
+    .background-text a {
+      color: inherit; text-decoration: underline;
+      text-decoration-color: var(--accent); text-underline-offset: 3px;
+    }
+    .background-text a:hover { color: var(--accent); }
 
     .team-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 80px; margin-top: 34px;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 48px; margin-top: 34px;
     }
     .team-intro {
       grid-column: 1 / -1; max-width: 680px;
@@ -347,7 +416,6 @@
       grid-template-columns: 100px 1fr;
       column-gap: 24px;
     }
-    .team-spacer { margin-top: 40px; }
     .team-member:has(.team-photo) .team-photo {
       grid-column: 1; grid-row: 1 / 3;
       width: 100%; height: 120px;
@@ -386,7 +454,7 @@
 
 
     .contact-form-wrap {
-      max-width: 480px; margin: 64px auto 0;
+      max-width: 480px; margin: 64px 0 0;
     }
     .contact-email {
       font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 28px;
@@ -395,42 +463,45 @@
     }
     .contact-email:hover { opacity: 0.7; }
     .form-group { margin-bottom: 24px; }
+    /* The contact form sits on the deep teal band: light text, bright teal accents */
     .form-label {
       font-family: 'DM Sans', sans-serif; font-size: 11px;
       letter-spacing: 2px; text-transform: uppercase;
-      color: var(--text-secondary); display: block; margin-bottom: 8px;
+      color: #b9c9cc; display: block; margin-bottom: 8px;
     }
     .form-input, .form-select, .form-textarea {
       width: 100%; padding: 14px 0; border: none;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid rgba(255,255,255,0.35);
       background: transparent; font-family: 'DM Sans', sans-serif;
-      font-size: 15px; color: var(--text); outline: none;
+      font-size: 15px; color: #fff; outline: none;
       transition: border-color 0.3s;
     }
+    .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.5); }
     .form-input:focus, .form-select:focus, .form-textarea:focus {
-      border-color: var(--accent);
+      border-color: #5CBFC5;
     }
     .form-textarea { resize: vertical; min-height: 100px; }
     .form-select { cursor: pointer; appearance: none; }
     .form-submit {
       font-family: 'DM Sans', sans-serif; font-size: 13px;
-      padding: 16px 48px; background: var(--text);
-      color: var(--bg); border: none; cursor: pointer;
+      padding: 16px 48px; background: #5CBFC5;
+      color: var(--bg-dark); border: none; cursor: pointer;
       letter-spacing: 1px; text-transform: uppercase;
       transition: background 0.25s; margin-top: 8px;
     }
-    .form-submit:hover:not(:disabled) { background: var(--accent); }
+    .form-submit:hover:not(:disabled) { background: #fff; }
     .form-submit:disabled { opacity: 0.6; cursor: default; }
     .contact-form-label {
       font-family: 'DM Sans', sans-serif; font-size: 11px;
       letter-spacing: 2px; text-transform: uppercase;
-      color: var(--text-secondary); margin-bottom: 28px;
+      color: #b9c9cc; margin-bottom: 28px;
     }
 
     .footer {
-      padding: 40px 48px; border-top: 1px solid var(--border);
+      padding: 40px var(--gutter); background: var(--band);
       display: flex; justify-content: space-between; align-items: center;
     }
+    .footer .footer-text { color: #b9c9cc; }
     .footer-text {
       font-family: 'DM Sans', sans-serif; font-size: 12px;
       color: #999; letter-spacing: 0.5px;
@@ -441,26 +512,26 @@
     }
     .footer-links { display: flex; gap: 24px; align-items: center; }
     .footer-links a { text-decoration: none; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--accent); }
+    .footer-links a:hover { color: #fff; }
 
     .form-privacy-note {
       font-family: 'DM Sans', sans-serif; font-size: 12px;
-      color: var(--text-secondary); margin-top: 16px; line-height: 1.6;
+      color: #b9c9cc; margin-top: 16px; line-height: 1.6;
     }
-    .form-privacy-note a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); }
-    .form-privacy-note a:hover { color: var(--accent); }
+    .form-privacy-note a { color: inherit; text-decoration: underline; text-decoration-color: #5CBFC5; }
+    .form-privacy-note a:hover { color: #fff; }
     .form-honeypot { display: none; }
     .form-status:empty { display: none; }
     .form-status {
       font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.6;
-      color: var(--text); margin-top: 24px;
-      padding: 16px 20px; border-left: 2px solid var(--accent);
+      color: #fff; margin-top: 24px;
+      padding: 16px 20px; border-left: 2px solid #5CBFC5;
     }
     .form-status p { margin: 0; }
-    .form-status ul { margin: 8px 0 0; padding-left: 20px; font-size: 13px; color: var(--text-secondary); }
-    .form-status a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); }
-    .form-status a:hover { color: var(--accent); }
-    .form-status-error { border-left-color: #b42318; }
+    .form-status ul { margin: 8px 0 0; padding-left: 20px; font-size: 13px; color: #b9c9cc; }
+    .form-status a { color: inherit; text-decoration: underline; text-decoration-color: #5CBFC5; }
+    .form-status a:hover { color: #5CBFC5; }
+    .form-status-error { border-left-color: #f97066; }
 
     .capabilities-list { margin-top: 64px; }
     .capability-item {
@@ -514,65 +585,57 @@
     .page-cta {
       display: inline-block;
       font-family: 'DM Sans', sans-serif; font-size: 13px;
-      padding: 16px 48px; background: var(--text);
-      color: var(--bg); text-decoration: none;
+      padding: 16px 48px; background: var(--accent);
+      color: #fff; text-decoration: none;
       letter-spacing: 1px; text-transform: uppercase;
       transition: background 0.25s; margin-top: 40px;
     }
-    .page-cta:hover { background: var(--accent); }
+    .page-cta:hover { background: var(--text); }
 
+    /* Research & credentials: one row below the background text, wrapping below 1024px */
     .creds-strip {
-      display: flex;
-      gap: 32px 48px;
-      align-items: flex-start;
+      display: flex; flex-direction: column; gap: 24px;
+      padding-top: 40px; border-top: 1px solid var(--border);
       font-family: 'DM Sans', sans-serif;
     }
     .creds-label {
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--muted, #888);
-      flex: 0 0 auto;
-      white-space: nowrap;
-      align-self: center;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-secondary); white-space: nowrap;
     }
-    .creds-items {
-      flex: 1 1 0;
-      min-width: 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px 32px;
+    .creds-items { display: flex; gap: 32px; }
+    .cred-item { flex: 1 1 0; min-width: 120px; text-decoration: none; color: inherit; }
+    .cred-name {
+      font-weight: 700; font-size: 22px; letter-spacing: -0.01em;
+      line-height: 1.1; color: var(--accent);
     }
-    .cred-item {
-      flex: 1 1 calc(33.33% - 22px);
-      min-width: 120px;
-      text-decoration: none;
-      color: inherit;
+    .cred-sub { font-size: 14px; color: var(--text-secondary); margin-top: 4px; letter-spacing: 0.3px; }
+    @media (max-width: 1023px) {
+      .creds-items { flex-wrap: wrap; gap: 20px 32px; }
+      .cred-item { flex: 1 1 calc(33.33% - 22px); }
     }
-    @media (min-width: 1280px) {
-      .cred-item { flex: 1 1 calc(20% - 26px); }
-    }
-    @media (max-width: 680px) {
-      .creds-strip { flex-wrap: wrap; }
+
+    @media (max-width: 1023px) {
+      .nav-links { display: none; }
+      .nav-menu { display: block; }
+      .team-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 768px) {
-      .nav { padding: 16px 24px; }
-      .nav-links { gap: 16px; }
-      .nav-link { display: none; }
-      .hero { padding: 120px 24px 60px; }
-      .section { padding: 80px 24px; }
+      :root { --gutter: 24px; }
+      .nav { padding: 16px var(--gutter); }
+      .hero { padding: 120px var(--gutter) 60px; }
+      .hero-field { display: none; }
+      .section { padding: 80px var(--gutter); }
       .problems-grid { grid-template-columns: 1fr; }
+      .cluster { grid-template-columns: 1fr; gap: 20px; margin-top: 48px; }
       .approach-grid { grid-template-columns: 1fr; gap: 40px; }
-      .team-grid { grid-template-columns: 1fr; gap: 48px; }
       .team-member:has(.team-photo) { display: block; }
       .team-member:has(.team-photo) .team-photo { width: 80px; height: 80px; margin-bottom: 10px; }
       .team-member:has(.team-photo) .team-name { margin-bottom: 10px; }
-      .theme-switcher { bottom: 12px; right: 12px; }
       .capability-item { grid-template-columns: 1fr; gap: 12px; }
       .step-item { grid-template-columns: 48px 1fr; gap: 20px; }
       .step-number { font-size: 28px; }
-      .footer { padding: 32px 24px; flex-direction: column; align-items: flex-start; gap: 16px; }
+      .footer { padding: 32px var(--gutter); flex-direction: column; align-items: flex-start; gap: 16px; }
     }
   </style><style>
   a.nav-cta { text-decoration: none; }
@@ -896,7 +959,7 @@
     .post-nav-older { text-align: left; margin-left: 0; }
     .post-nav-link { max-width: 100%; }
   }
-</style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit"><img src="/assets/img/wordmark.png" alt="Modal Resonance" class="nav-logo-img"/></a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Contact</a></div></nav><main class="post-wrap"><header class="post-header"><div class="post-tags"><span class="post-tag">PII detection</span><span class="post-tag">benchmarks</span><span class="post-tag">privacy</span><span class="post-tag">NLP</span><span class="post-tag">open source</span></div><h1 class="post-title">Benchmarking Open-Source PII Detectors</h1><div class="post-meta"><time dateTime="2026-05-19">May 19, 2026</time><span class="post-meta-sep">·</span><span>13<!-- --> min read</span><span class="post-meta-sep">·</span><span><a href="https://www.linkedin.com/in/matteo-giomi/" target="_blank" rel="noopener noreferrer">Dr. Matteo Giomi</a>, <a href="https://www.linkedin.com/in/oalifdal/" target="_blank" rel="noopener noreferrer">Omar Ali Fdal</a></span></div></header><div class="post-body-wrap has-toc"><aside class="post-toc"><div class="post-toc-label">Contents</div><ol class="post-toc-list"><li class="post-toc-item post-toc-h2"><a href="#the-detectors">The detectors</a></li><li class="post-toc-item post-toc-h3"><a href="#presidio">Presidio</a></li><li class="post-toc-item post-toc-h3"><a href="#gliner">GLiNER</a></li><li class="post-toc-item post-toc-h3"><a href="#openai-privacy-filter">OpenAI Privacy Filter</a></li><li class="post-toc-item post-toc-h2"><a href="#experimental-setup">Experimental Setup</a></li><li class="post-toc-item post-toc-h3"><a href="#benchmark-entities">Benchmark entities</a></li><li class="post-toc-item post-toc-h3"><a href="#datasets">Datasets</a></li><li class="post-toc-item post-toc-h3"><a href="#detector-configuration">Detector configuration</a></li><li class="post-toc-item post-toc-h3"><a href="#evaluation-methodology">Evaluation methodology</a></li><li class="post-toc-item post-toc-h2"><a href="#results">Results</a></li><li class="post-toc-item post-toc-h3"><a href="#detection-performances">Detection performances</a></li><li class="post-toc-item post-toc-h3"><a href="#throughput">Throughput</a></li><li class="post-toc-item post-toc-h3"><a href="#comparing-detectors">Comparing detectors</a></li><li class="post-toc-item post-toc-h2"><a href="#conclusions">Conclusions</a></li><li class="post-toc-item post-toc-h3"><a href="#which-detector-to-pick">Which detector to pick</a></li><li class="post-toc-item post-toc-h3"><a href="#limitations-and-future-directions">Limitations and future directions</a></li></ol></aside><article class="post-content"><aside class="post-note"><p>TL;DR: We benchmarked three open-source PII detectors: Microsoft Presidio, GLiNER, and
+</style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit"><img src="/assets/img/wordmark.png" alt="Modal Resonance" class="nav-logo-img"/></a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Contact</a></div><details class="nav-menu"><summary class="nav-menu-button" aria-label="Menu"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></summary><div class="nav-menu-panel"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Contact</a></div></details></nav><main class="post-wrap"><header class="post-header"><div class="post-tags"><span class="post-tag">PII detection</span><span class="post-tag">benchmarks</span><span class="post-tag">privacy</span><span class="post-tag">NLP</span><span class="post-tag">open source</span></div><h1 class="post-title">Benchmarking Open-Source PII Detectors</h1><div class="post-meta"><time dateTime="2026-05-19">May 19, 2026</time><span class="post-meta-sep">·</span><span>13<!-- --> min read</span><span class="post-meta-sep">·</span><span><a href="https://www.linkedin.com/in/matteo-giomi/" target="_blank" rel="noopener noreferrer">Dr. Matteo Giomi</a>, <a href="https://www.linkedin.com/in/oalifdal/" target="_blank" rel="noopener noreferrer">Omar Ali Fdal</a></span></div></header><div class="post-body-wrap has-toc"><aside class="post-toc"><div class="post-toc-label">Contents</div><ol class="post-toc-list"><li class="post-toc-item post-toc-h2"><a href="#the-detectors">The detectors</a></li><li class="post-toc-item post-toc-h3"><a href="#presidio">Presidio</a></li><li class="post-toc-item post-toc-h3"><a href="#gliner">GLiNER</a></li><li class="post-toc-item post-toc-h3"><a href="#openai-privacy-filter">OpenAI Privacy Filter</a></li><li class="post-toc-item post-toc-h2"><a href="#experimental-setup">Experimental Setup</a></li><li class="post-toc-item post-toc-h3"><a href="#benchmark-entities">Benchmark entities</a></li><li class="post-toc-item post-toc-h3"><a href="#datasets">Datasets</a></li><li class="post-toc-item post-toc-h3"><a href="#detector-configuration">Detector configuration</a></li><li class="post-toc-item post-toc-h3"><a href="#evaluation-methodology">Evaluation methodology</a></li><li class="post-toc-item post-toc-h2"><a href="#results">Results</a></li><li class="post-toc-item post-toc-h3"><a href="#detection-performances">Detection performances</a></li><li class="post-toc-item post-toc-h3"><a href="#throughput">Throughput</a></li><li class="post-toc-item post-toc-h3"><a href="#comparing-detectors">Comparing detectors</a></li><li class="post-toc-item post-toc-h2"><a href="#conclusions">Conclusions</a></li><li class="post-toc-item post-toc-h3"><a href="#which-detector-to-pick">Which detector to pick</a></li><li class="post-toc-item post-toc-h3"><a href="#limitations-and-future-directions">Limitations and future directions</a></li></ol></aside><article class="post-content"><aside class="post-note"><p>TL;DR: We benchmarked three open-source PII detectors: Microsoft Presidio, GLiNER, and
 OpenAI&#x27;s Privacy Filter. The results highlight that the right choice and setup depends on
 your entities, hardware, and use-case. OpenAI&#x27;s Privacy Filter offers the best out-of-the-box performance when
 a GPU is available, Presidio wins on pattern-based entities and CPU hardware, and GLiNER is
