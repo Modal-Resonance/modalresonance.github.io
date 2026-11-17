@@ -85,7 +85,7 @@
   <style>body { margin: 0; padding: 0; }</style>
 </head>
 <body>
-  <div id="root"><link rel="preload" as="image" href="/assets/img/wordmark.png"/><div style="background:#F7F9FA;color:#1a1a1a;min-height:100vh"><style>
+  <div id="root"><link rel="preload" as="image" href="/assets/img/wordmark.png"/><div class="post-page" style="background:#F7F9FA;color:#1a1a1a;min-height:100vh"><style>
     
   /* DM Sans - latin-ext */
   @font-face {
@@ -751,6 +751,10 @@
   /* Article body */
   .post-content {
     max-width: 720px;
+    /* Grid items default to min-width: auto, so unwrappable content (code
+       lines, min-width figures) would widen the column past the viewport.
+       0 lets those blocks scroll inside their own overflow-x containers. */
+    min-width: 0;
     font-family: 'DM Sans', sans-serif;
     font-size: 16px;
     line-height: 1.75;
@@ -844,6 +848,22 @@
     font-size: 14px;
   }
 
+  /* Syntax highlighting (rehype-highlight / highlight.js classes).
+     Lightened brand colours, readable on the dark code background. */
+  .post-content .hljs-attr,
+  .post-content .hljs-attribute,
+  .post-content .hljs-section     { color: #6fc6ca; }
+  .post-content .hljs-string      { color: #e0b46e; }
+  .post-content .hljs-number,
+  .post-content .hljs-literal,
+  .post-content .hljs-symbol      { color: #d892ab; }
+  .post-content .hljs-keyword,
+  .post-content .hljs-built_in,
+  .post-content .hljs-variable,
+  .post-content .hljs-meta        { color: #93b5e0; }
+  .post-content .hljs-bullet      { color: #9aa5b1; }
+  .post-content .hljs-comment     { color: #8b949e; font-style: italic; }
+
   .post-content figure { margin: 32px 0; }
 
   .post-content figcaption {
@@ -882,6 +902,40 @@
     line-height: 1.7;
     color: var(--text-secondary);
   }
+
+  /* Aside block: optional content. Inline and collapsed by default,
+     moved into the right margin on wide screens (see min-width: 1440px). */
+  .post-aside {
+    border: 1px dashed var(--accent);
+    margin: 0 0 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .post-aside summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 12px 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .post-aside summary::-webkit-details-marker { display: none; }
+  .post-aside summary::before { content: "+ "; }
+  .post-aside[open] summary::before { content: "\2212  "; }
+
+  .post-aside-body { padding: 0 20px 4px; }
+  .post-aside-body p { margin-bottom: 12px; }
+  .post-aside-body pre { margin: 12px 0; padding: 16px; }
+  .post-aside-body pre code { font-size: 12px; }
+
+  /* Keep anchor targets (headings, footnotes, back-refs) clear of the fixed nav */
+  .post-content [id] { scroll-margin-top: 96px; }
 
   /* Footnotes rendered by remark-gfm */
   .post-content .footnotes {
@@ -951,6 +1005,29 @@
 
   .post-back a:hover { color: var(--accent); }
 
+  /* Wide screens: widen the page so asides fit in a right margin next to the
+     720px text column, always expanded and not clickable. clear: right
+     stacks consecutive asides instead of overlapping them. */
+  @media (min-width: 1440px) {
+    .post-wrap { max-width: 1440px; }
+    .post-aside {
+      float: right;
+      clear: right;
+      width: 280px;
+      margin: 4px -328px 24px 0;
+      border: none;
+      border-top: 1px solid var(--accent);
+    }
+    .post-aside summary {
+      cursor: default;
+      pointer-events: none;
+      padding: 12px 0 8px;
+    }
+    .post-aside summary::before { content: none; }
+    .post-aside::details-content { content-visibility: visible; display: block; }
+    .post-aside-body { padding: 0; }
+  }
+
   @media (max-width: 768px) {
     .post-wrap { padding: 100px 24px 60px; }
     .post-body-wrap.has-toc { grid-template-columns: 1fr; }
@@ -958,6 +1035,64 @@
     .post-nav { flex-direction: column; }
     .post-nav-older { text-align: left; margin-left: 0; }
     .post-nav-link { max-width: 100%; }
+  }
+
+  @media print {
+    @page { margin: 18mm 16mm; }
+    html, body, .post-page { background: #ffffff !important; }
+
+    /* Nav prints once as a letterhead instead of overlaying every page */
+    .nav {
+      position: static;
+      padding: 0 0 16px;
+      background: none;
+      backdrop-filter: none;
+    }
+    .nav-links, .nav-menu { display: none; }
+
+    .post-wrap { padding: 32px 0 0; max-width: none; }
+    /* Firefox will not split a grid item across pages: use plain block flow */
+    .post-body-wrap, .post-body-wrap.has-toc { display: block; }
+    .post-toc, .post-nav, .post-back { display: none; }
+    .post-content .data-footnote-backref { display: none; }
+
+    .post-content pre {
+      background: #f4f6f8;
+      color: #1a1a1a;
+      border: 1px solid var(--border);
+      white-space: pre-wrap;
+    }
+    /* Original brand colours, readable on the light print background */
+    .post-content .hljs-attr,
+    .post-content .hljs-attribute,
+    .post-content .hljs-section     { color: #0D7377; }
+    .post-content .hljs-string      { color: #8f5f21; }
+    .post-content .hljs-number,
+    .post-content .hljs-literal,
+    .post-content .hljs-symbol      { color: #7A2E4A; }
+    .post-content .hljs-keyword,
+    .post-content .hljs-built_in,
+    .post-content .hljs-variable,
+    .post-content .hljs-meta        { color: #3E71A8; }
+    .post-content .hljs-bullet,
+    .post-content .hljs-comment     { color: #4a5568; }
+
+    .post-content figure,
+    .post-content pre,
+    .post-content table,
+    .post-note { break-inside: avoid; }
+    /* Asides print inline and expanded */
+    .post-aside { float: none; width: auto; margin: 0 0 24px; border: 1px dashed var(--accent); }
+    .post-aside summary { padding: 12px 20px 8px; }
+    .post-aside summary::before { content: none; }
+    .post-aside::details-content { content-visibility: visible; display: block; }
+    .post-aside-body { padding: 0 20px 4px; }
+    .post-content h2,
+    .post-content h3,
+    .post-content h4 { break-after: avoid; }
+    /* Diagrams scroll on narrow screens; on paper they shrink to the page */
+    .post-diagram { overflow: visible; }
+    .post-diagram svg { min-width: 0 !important; }
   }
 </style><nav class="nav"><a href="/" class="nav-logo" style="text-decoration:none;color:inherit"><img src="/assets/img/wordmark.png" alt="Modal Resonance" class="nav-logo-img"/></a><div class="nav-links"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Contact</a></div><details class="nav-menu"><summary class="nav-menu-button" aria-label="Menu"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></summary><div class="nav-menu-panel"><a class="nav-link" href="/#services">Services</a><a class="nav-link" href="/#expertise">Expertise</a><a class="nav-link" href="/#team">Team</a><a class="nav-link" href="/writing/" style="color:var(--text)">Writing</a><a class="nav-cta" href="/#contact">Contact</a></div></details></nav><main class="post-wrap"><header class="post-header"><div class="post-tags"><span class="post-tag">AI risk</span><span class="post-tag">privacy</span><span class="post-tag">AI governance</span><span class="post-tag">GDPR</span><span class="post-tag">generative AI</span></div><h1 class="post-title">Mapping Privacy Risk Across the AI Lifecycle</h1><div class="post-meta"><time dateTime="2026-05-05">May 5, 2026</time><span class="post-meta-sep">·</span><span>12<!-- --> min read</span><span class="post-meta-sep">·</span><span><a href="https://www.linkedin.com/in/oalifdal/" target="_blank" rel="noopener noreferrer">Omar Ali Fdal</a>, <a href="https://www.linkedin.com/in/matteo-giomi/" target="_blank" rel="noopener noreferrer">Dr. Matteo Giomi</a></span></div></header><div class="post-body-wrap has-toc"><aside class="post-toc"><div class="post-toc-label">Contents</div><ol class="post-toc-list"><li class="post-toc-item post-toc-h2"><a href="#phase-1-exploration">Phase 1: Exploration</a></li><li class="post-toc-item post-toc-h2"><a href="#phase-2-training">Phase 2: Training</a></li><li class="post-toc-item post-toc-h2"><a href="#phase-3-deployment">Phase 3: Deployment</a></li><li class="post-toc-item post-toc-h2"><a href="#phase-4-inference">Phase 4: Inference</a></li><li class="post-toc-item post-toc-h2"><a href="#what-actually-changes-with-generative-ai">What Actually Changes with Generative AI</a></li><li class="post-toc-item post-toc-h2"><a href="#implications-for-privacy-and-governance">Implications for Privacy and Governance</a></li></ol></aside><article class="post-content"><aside class="post-note"><p>TL;DR: Generative AI is often discussed as if it were a new category of privacy risk.
 In practice, it shares its lifecycle with traditional machine learning, and many of the underlying risks are the same.

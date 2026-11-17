@@ -7,6 +7,14 @@
     <language>en</language>
     <atom:link href="https://modalresonance.com/writing/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Doppelt: open-source automated data retention with built-in privacy controls</title>
+      <link>https://modalresonance.com/writing/doppelt-data-retention/</link>
+      <description><![CDATA[Doppelt is an open-source tool that enforces data retention policies on relational databases, deleting or de-identifying records once their retention period ends.]]></description>
+      <pubDate>Tue, 15 Sep 2026 00:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://modalresonance.com/writing/doppelt-data-retention/</guid>
+      <author>Daniel Perez, Omar Ali Fdal</author>
+    </item>
+    <item>
       <title>Towards technical evaluation of AI model anonymity</title>
       <link>https://modalresonance.com/writing/paname-ai-model-anonymity/</link>
       <description><![CDATA[We tested the CNIL's PANAME library, fine-tuning a Llama 3.2 1B model on Enron emails to measure how much sanitizing training data reduces membership inference attack success.]]></description>
